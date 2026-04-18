@@ -12,6 +12,10 @@ public struct EditorsPickBanner: View {
     private let appAuthor: String
     private let openAction: () -> Void
 
+    private let primaryText: Color = .white
+    private let secondaryText: Color = .white.opacity(0.75)
+    private let tertiaryText: Color = .white.opacity(0.5)
+
     public init(
         category: String = "Editor's Pick",
         headline: String,
@@ -35,23 +39,29 @@ public struct EditorsPickBanner: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(category.uppercased())
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(tertiaryText)
 
             Text(headline)
-                .font(.system(size: 44, weight: .bold))
-                .foregroundStyle(.primary)
-                .fixedSize(horizontal: false, vertical: true)
+                .lineLimit(2)
+                .font(.system(size: 40, weight: .bold))
+                .minimumScaleFactor(0.5)
+                .foregroundStyle(primaryText)
+                .frame(maxWidth: 370)
+
+            Spacer().frame(height: 16)
 
             Text(description)
+                .lineLimit(3)
                 .font(.body)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                .foregroundStyle(secondaryText)
+                .lineSpacing(4)
+                .frame(maxWidth: 370)
 
-            Spacer(minLength: 24)
+            Spacer().frame(height: 32)
 
             HStack(spacing: 14) {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -66,10 +76,10 @@ public struct EditorsPickBanner: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(appName)
                         .font(.headline)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(primaryText)
                     Text(appAuthor)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(tertiaryText)
                 }
 
                 Spacer(minLength: 12)
@@ -77,23 +87,24 @@ public struct EditorsPickBanner: View {
                 Button(action: openAction) {
                     Text("Open")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.black)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(Color.gray.opacity(0.3), in: Capsule())
+                        .background(Color.white.opacity(0.8), in: Capsule())
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(minWidth: 300)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .background {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(red: 0.10, green: 0.12, blue: 0.20),
-                            Color(red: 0.22, green: 0.26, blue: 0.36)
+                            Color(red: 0.22, green: 0.26, blue: 0.36),
+                            Color(red: 0.10, green: 0.12, blue: 0.20)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -113,5 +124,5 @@ public struct EditorsPickBanner: View {
         openAction: {}
     )
     .padding()
-    .frame(width: 900, height: 420)
+    .frame(width: 600)
 }

@@ -6,14 +6,17 @@ import SwiftUI
 import SwiftUIToolbox
 
 struct MainWindow: Scene {
-    
+
+    @AppStorage("appearancePreference") private var appearance: AppearancePreference = .system
+
     var body: some Scene {
 
         WindowGroup {
             Sidebar()
-                .frame(minWidth: 400, minHeight: 400)
+                .frame(minWidth: 1200, minHeight: 580)
                 .background(AlwaysOnTop())
                 .appEnvironment(.default)
+                .preferredColorScheme(appearance.colorScheme)
         }
         .commands {
             AboutCommand()

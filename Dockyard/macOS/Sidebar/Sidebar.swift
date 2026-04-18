@@ -13,6 +13,8 @@ struct Sidebar: View {
 
     @State var isInspectorPresented: Bool = false
 
+    @AppStorage("appearancePreference") private var appearance: AppearancePreference = .system
+
     var body: some View {
         NavigationSplitView {
             List(selection: $selection) {
@@ -59,12 +61,12 @@ struct Sidebar: View {
 
             }
             .listStyle(SidebarListStyle())
-            .frame(minWidth: 180, idealWidth: 180, maxWidth: 300)
             .clipped()
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 SidebarFooter()
             }
             .searchable(text: $searchText, placement: .sidebar)
+            .navigationSplitViewColumnWidth(220)
         } detail: {
             switch selection {
             case .today:
@@ -87,17 +89,14 @@ struct Sidebar: View {
                 EmptyPane()
             }
         }
-        .inspector(isPresented: $isInspectorPresented) {
-            InspectorPanel()
-                .inspectorColumnWidth(min: 200, ideal: 250, max: 350)
-        }
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button {
-                    isInspectorPresented.toggle()
+                    appearance = appearance.next
                 } label: {
-                    Label("Toggle Inspector", systemImage: "sidebar.trailing")
+                    Label(appearance.label, systemImage: appearance.symbolName)
                 }
+                .help(appearance.label)
             }
         }
     }

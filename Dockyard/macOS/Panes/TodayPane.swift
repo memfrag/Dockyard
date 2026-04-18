@@ -8,62 +8,16 @@ import AppDesign
 
 struct TodayPane: View {
 
-    private let featuredApps: [FeaturedApp] = [
-        FeaturedApp(
-            iconSystemName: "person.fill",
-            iconBackground: .blue,
-            category: "People",
-            title: "Directory",
-            description: "Find people by team, role, or name"
-        ),
-        FeaturedApp(
-            iconSystemName: "video.fill",
-            iconBackground: .red,
-            category: "Productivity",
-            title: "Meet",
-            description: "One-click video calls with anyone"
-        ),
-        FeaturedApp(
-            iconSystemName: "bubble.left.and.bubble.right.fill",
-            iconBackground: .purple,
-            category: "Productivity",
-            title: "Chat",
-            description: "Team channels, DMs, and threads"
-        ),
-        FeaturedApp(
-            iconSystemName: "calendar",
-            iconBackground: .orange,
-            category: "Productivity",
-            title: "Schedule",
-            description: "Your week at a glance"
-        ),
-        FeaturedApp(
-            iconSystemName: "doc.text.fill",
-            iconBackground: .teal,
-            category: "Writing",
-            title: "Notes",
-            description: "Capture ideas, link anything"
-        ),
-        FeaturedApp(
-            iconSystemName: "chart.bar.fill",
-            iconBackground: .green,
-            category: "Analytics",
-            title: "Pulse",
-            description: "Live dashboards and alerts"
-        )
-    ]
-
-    private let cardColumns = [GridItem(.adaptive(minimum: 250), spacing: 16)]
-
     var body: some View {
         Pane {
             NavigationStack {
                 ScrollView(.vertical) {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 0) {
                         PaneHeader(
                             "On the shelf this week",
                             subtitle: "Today · \(Date().weekdayDayMonth())"
                         )
+                        .padding(.bottom, 16)
 
                         HStack(alignment: .top, spacing: 16) {
                             EditorsPickBanner(
@@ -79,7 +33,7 @@ struct TodayPane: View {
                                 LargeAppCard(
                                     iconSystemName: "airplane",
                                     iconBackground: .black,
-                                    category: "New to Hub",
+                                    category: "New to Dockyard",
                                     title: "Deploy",
                                     description: "A thin client over the deploy pipeline. Now in beta."
                                 )
@@ -97,23 +51,18 @@ struct TodayPane: View {
                             .frame(width: 380)
                         }
                         .fixedSize(horizontal: false, vertical: true)
+                        .padding(.bottom, 32)
 
-                        PaneSectionHeader(
+                        PaneSection(
                             "For your team",
                             subtitle: "Picked for you based on what members of your team use most"
-                        )
+                        ) {
+                            AppCardGrid(items: MockData.featuredApps)
+                        }
+                        .padding(.bottom, 32)
 
-                        LazyVGrid(columns: cardColumns, alignment: .leading, spacing: 16) {
-                            ForEach(featuredApps) { app in
-                                AppCard(
-                                    iconSystemName: app.iconSystemName,
-                                    iconBackground: app.iconBackground,
-                                    category: app.category,
-                                    title: app.title,
-                                    description: app.description,
-                                    openAction: {}
-                                )
-                            }
+                        PaneSection("Recently updated") {
+                            AppCardGrid(items: MockData.featuredApps)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -123,15 +72,6 @@ struct TodayPane: View {
         }
         .navigationTitle("Today")
     }
-}
-
-private struct FeaturedApp: Identifiable {
-    let id = UUID()
-    let iconSystemName: String
-    let iconBackground: Color
-    let category: String
-    let title: String
-    let description: String
 }
 
 #Preview {

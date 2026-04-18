@@ -2,6 +2,8 @@ import SwiftUI
 
 public struct LargeAppCard: View {
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private let iconSystemName: String
     private let iconBackground: Color
     private let iconForeground: Color
@@ -29,10 +31,10 @@ public struct LargeAppCard: View {
         HStack(alignment: .center, spacing: 18) {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(iconBackground)
-                .frame(width: 88, height: 88)
+                .frame(width: 72, height: 72)
                 .overlay {
                     Image(systemName: iconSystemName)
-                        .font(.system(size: 40, weight: .semibold))
+                        .font(.system(size: 36, weight: .semibold))
                         .foregroundStyle(iconForeground)
                 }
 
@@ -58,8 +60,12 @@ public struct LargeAppCard: View {
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.gray.opacity(0.15))
+            let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+            if colorScheme == .dark {
+                shape.fill(Color.gray.opacity(0.15))
+            } else {
+                shape.strokeBorder(Color.gray.opacity(0.15), lineWidth: 1)
+            }
         }
     }
 }
