@@ -3,22 +3,22 @@
 //
 
 import SwiftUI
-import SwiftUIToolbox
 
 struct DesignPane: View {
 
     var body: some View {
-        Pane {
-            NavigationStack {
-                VStack(spacing: 20) {
-                    Text("Design")
-                }
-            }
-        }
-        .navigationTitle("Design")
+        CatalogPane(
+            title: "Design",
+            category: "Design",
+            sectionTitle: "Available apps",
+            emptyTitle: "No design apps yet",
+            emptyMessage: "Design apps will appear here.",
+            subtitle: CatalogPane.countSubtitle
+        )
     }
 }
 
 #Preview {
     DesignPane()
+        .previewEnvironment()
 }

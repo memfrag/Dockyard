@@ -3,20 +3,22 @@
 //
 
 import SwiftUI
-import SwiftUIToolbox
 
 struct ProductivityPane: View {
 
     var body: some View {
-        Pane {
-            VStack(spacing: 20) {
-                Text("Productivity")
-            }
-        }
-        .navigationTitle("Productivity")
+        CatalogPane(
+            title: "Productivity",
+            category: "Productivity",
+            sectionTitle: "Available apps",
+            emptyTitle: "No productivity apps yet",
+            emptyMessage: "Productivity apps will appear here.",
+            subtitle: CatalogPane.countSubtitle
+        )
     }
 }
 
 #Preview {
     ProductivityPane()
+        .previewEnvironment()
 }

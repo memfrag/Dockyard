@@ -22,7 +22,8 @@ struct InstalledPane: View {
                     VStack(alignment: .leading, spacing: 20) {
                         PaneHeader(
                             "Installed",
-                            subtitle: "\(engine.installations.count) app\(engine.installations.count == 1 ? "" : "s") in ~/Applications"
+                            subtitle: "\(engine.installations.count) app\(engine.installations.count == 1 ? "" : "s") in ~/Applications",
+                            description: "Right-click an app for the option to uninstall it."
                         )
 
                         if engine.installations.isEmpty {

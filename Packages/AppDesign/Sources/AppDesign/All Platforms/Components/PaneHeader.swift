@@ -26,7 +26,7 @@ public struct PaneHeader: View {
                 .foregroundStyle(.primary)
             if let description {
                 Text(description)
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
         }

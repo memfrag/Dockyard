@@ -4,8 +4,11 @@
 
 import SwiftUI
 import SwiftUIToolbox
+import DockyardEngine
 
 struct Sidebar: View {
+
+    @Environment(DockyardEngine.self) private var engine
 
     @State var searchText: String = ""
 
@@ -31,8 +34,12 @@ struct Sidebar: View {
                     }
 
                     NavigationLink(value: SidebarPane.installed) {
-                        Label("Installed", systemImage: "checkmark.app")
-                            .imageScale(.large)
+                        HStack {
+                            Label("Installed", systemImage: "checkmark.app")
+                                .imageScale(.large)
+                            Spacer(minLength: 8)
+                            CountBadge(count: engine.installations.count)
+                        }
                     }
                 }
 
@@ -102,6 +109,21 @@ struct Sidebar: View {
                 .help(appearance.label)
             }
         }
+    }
+}
+
+private struct CountBadge: View {
+
+    let count: Int
+
+    var body: some View {
+        Text("\(count)")
+            .font(.caption2.weight(.semibold))
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 2)
+            .background(Color.secondary.opacity(0.2), in: Capsule())
     }
 }
 

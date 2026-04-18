@@ -3,20 +3,22 @@
 //
 
 import SwiftUI
-import SwiftUIToolbox
 
 struct EntertainmentPane: View {
 
     var body: some View {
-        Pane {
-            VStack(spacing: 20) {
-                Text("Entertainment")
-            }
-        }
-        .navigationTitle("Entertainment")
+        CatalogPane(
+            title: "Entertainment",
+            category: "Entertainment",
+            sectionTitle: "Available apps",
+            emptyTitle: "No entertainment apps yet",
+            emptyMessage: "Entertainment apps will appear here.",
+            subtitle: CatalogPane.countSubtitle
+        )
     }
 }
 
 #Preview {
     EntertainmentPane()
+        .previewEnvironment()
 }

@@ -3,20 +3,22 @@
 //
 
 import SwiftUI
-import SwiftUIToolbox
 
 struct FinancePane: View {
 
     var body: some View {
-        Pane {
-            VStack(spacing: 20) {
-                Text("Finance")
-            }
-        }
-        .navigationTitle("Finance")
+        CatalogPane(
+            title: "Finance",
+            category: "Finance",
+            sectionTitle: "Available apps",
+            emptyTitle: "No finance apps yet",
+            emptyMessage: "Finance apps will appear here.",
+            subtitle: CatalogPane.countSubtitle
+        )
     }
 }
 
 #Preview {
     FinancePane()
+        .previewEnvironment()
 }
