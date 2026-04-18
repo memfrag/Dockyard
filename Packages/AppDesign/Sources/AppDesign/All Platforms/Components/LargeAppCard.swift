@@ -64,7 +64,7 @@ public struct LargeAppCard: View {
             if colorScheme == .dark {
                 shape.fill(Color.gray.opacity(0.15))
             } else {
-                shape.strokeBorder(Color.gray.opacity(0.15), lineWidth: 1)
+                shape.strokeBorder(Color.gray.opacity(0.2), lineWidth: 1)
             }
         }
     }
