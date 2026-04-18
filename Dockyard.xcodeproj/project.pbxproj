@@ -1,0 +1,724 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		053C976E527D5696AAF60839 /* SwiftUIToolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 28FA968C0A6B52662403ABBD /* SwiftUIToolbox */; };
+		165021688ED321FE4E5EA9DE /* SystemKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BCAAA2F3335E2DD5A9A0448 /* SystemKit */; };
+		1BE339919F24B384BBF3D60B /* MessagePackKit in Frameworks */ = {isa = PBXBuildFile; productRef = 882687B25E3236CF29443149 /* MessagePackKit */; };
+		203900AA7722330D7F52F4AF /* AttributionsUI in Frameworks */ = {isa = PBXBuildFile; productRef = EA3785FA72FB763346EF2FAC /* AttributionsUI */; };
+		29F417BBF16D36CC2174D3C6 /* BinaryDataKit in Frameworks */ = {isa = PBXBuildFile; productRef = DC6D891D2FDA537CACC58F87 /* BinaryDataKit */; };
+		2D15D4A196DF308EF7334D5A /* CollectionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8EDDF619C671AACF12D693B8 /* CollectionKit */; };
+		40D38F1C6BFE5F2DC2C626EA /* SettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = ED312802535296D995E85EAD /* SettingsUI */; };
+		4376CFC9A25BC5AD97F0C9AF /* MathKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7D6069FCE84946ED353CFD11 /* MathKit */; };
+		49BA70A737D05BD8080BB5A9 /* URLToolbox in Frameworks */ = {isa = PBXBuildFile; productRef = F38A5489BD67B438B3ABA331 /* URLToolbox */; };
+		76D8E3FD8B4CCE198315AA4E /* KeyValueStore in Frameworks */ = {isa = PBXBuildFile; productRef = D0D467C3FAE49E659A92B6E3 /* KeyValueStore */; };
+		7F51A022B7711AD6B32E1B31 /* AppRouting in Frameworks */ = {isa = PBXBuildFile; productRef = AD77D7CB9C9B52AE2D0AE2AA /* AppRouting */; };
+		8417B317E1D1515FE326D268 /* CGMath in Frameworks */ = {isa = PBXBuildFile; productRef = 2265429C4499CFA2E2D242EA /* CGMath */; };
+		856B6C375164F5D44B176580 /* Markin in Frameworks */ = {isa = PBXBuildFile; productRef = 28DDEF73D00BAAB369F224C3 /* Markin */; };
+		8A90509D1E5DE4C6EE1622A9 /* AppDesign in Frameworks */ = {isa = PBXBuildFile; productRef = CFC60E06DC36C25D4B445953 /* AppDesign */; };
+		8B816404D75803EC2303B1C1 /* SensibleStyling in Frameworks */ = {isa = PBXBuildFile; productRef = 6DE5404E2B5BF2A6811EA86F /* SensibleStyling */; };
+		911D668044788307CA443EA8 /* Zipcode in Frameworks */ = {isa = PBXBuildFile; productRef = 10CF6197FAA4BB8D6B8622B7 /* Zipcode */; };
+		AE6D791CE4891605C53486FD /* Constructs in Frameworks */ = {isa = PBXBuildFile; productRef = E7F41C198C356C44A8875508 /* Constructs */; };
+		BAB5694F801E957F924B7714 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = BADE8CD6C3B6196CE4148BCA /* MarkdownUI */; };
+		C0519C5143F38D7BE042C7FA /* CoreXLSX in Frameworks */ = {isa = PBXBuildFile; productRef = 0FCDAB009BFCFAEFE36D37D8 /* CoreXLSX */; };
+		E89C6A476A5559C426B0A396 /* TextToolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 20435EFCE7C3DC65063526C1 /* TextToolbox */; };
+		F3228552CF50DCBB02F39815 /* UserDefaultsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD5E67198D821EBE3E2C2DD /* UserDefaultsUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		40A33CDF5D8B7809EF564484 /* AppDesign */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AppDesign; path = Packages/AppDesign; sourceTree = SOURCE_ROOT; };
+		7BFBFD1AC261D8B21107202D /* Dockyard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dockyard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		9B54BAF622B7D6EC67409981 /* Dockyard */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Dockyard;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BAF4B714EDEAC8D09F4FBC9C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A90509D1E5DE4C6EE1622A9 /* AppDesign in Frameworks */,
+				7F51A022B7711AD6B32E1B31 /* AppRouting in Frameworks */,
+				203900AA7722330D7F52F4AF /* AttributionsUI in Frameworks */,
+				29F417BBF16D36CC2174D3C6 /* BinaryDataKit in Frameworks */,
+				8417B317E1D1515FE326D268 /* CGMath in Frameworks */,
+				2D15D4A196DF308EF7334D5A /* CollectionKit in Frameworks */,
+				AE6D791CE4891605C53486FD /* Constructs in Frameworks */,
+				76D8E3FD8B4CCE198315AA4E /* KeyValueStore in Frameworks */,
+				BAB5694F801E957F924B7714 /* MarkdownUI in Frameworks */,
+				856B6C375164F5D44B176580 /* Markin in Frameworks */,
+				4376CFC9A25BC5AD97F0C9AF /* MathKit in Frameworks */,
+				1BE339919F24B384BBF3D60B /* MessagePackKit in Frameworks */,
+				8B816404D75803EC2303B1C1 /* SensibleStyling in Frameworks */,
+				40D38F1C6BFE5F2DC2C626EA /* SettingsUI in Frameworks */,
+				053C976E527D5696AAF60839 /* SwiftUIToolbox in Frameworks */,
+				165021688ED321FE4E5EA9DE /* SystemKit in Frameworks */,
+				E89C6A476A5559C426B0A396 /* TextToolbox in Frameworks */,
+				49BA70A737D05BD8080BB5A9 /* URLToolbox in Frameworks */,
+				F3228552CF50DCBB02F39815 /* UserDefaultsUI in Frameworks */,
+				911D668044788307CA443EA8 /* Zipcode in Frameworks */,
+				C0519C5143F38D7BE042C7FA /* CoreXLSX in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6ACEF171D1E7098BFD7FCCEC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7BFBFD1AC261D8B21107202D /* Dockyard.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		82281A9EA690A148F64371D7 = {
+			isa = PBXGroup;
+			children = (
+				9B54BAF622B7D6EC67409981 /* Dockyard */,
+				E3D53C5180D4993FCDAA5353 /* Packages */,
+				6ACEF171D1E7098BFD7FCCEC /* Products */,
+			);
+			indentWidth = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+		};
+		E3D53C5180D4993FCDAA5353 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				40A33CDF5D8B7809EF564484 /* AppDesign */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		38B859A798C9EC891106C466 /* Dockyard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3896AD1ECAADB5A630353BCF /* Build configuration list for PBXNativeTarget "Dockyard" */;
+			buildPhases = (
+				B240D76C4AEE15A19CE459F1 /* Sources */,
+				974611266E1D27F1EED02F48 /* Swift Lint */,
+				AA6BC0E5D7DDF8E37ACFCA92 /* Resources */,
+				BAF4B714EDEAC8D09F4FBC9C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				9B54BAF622B7D6EC67409981 /* Dockyard */,
+			);
+			name = Dockyard;
+			packageProductDependencies = (
+				CFC60E06DC36C25D4B445953 /* AppDesign */,
+				AD77D7CB9C9B52AE2D0AE2AA /* AppRouting */,
+				EA3785FA72FB763346EF2FAC /* AttributionsUI */,
+				DC6D891D2FDA537CACC58F87 /* BinaryDataKit */,
+				2265429C4499CFA2E2D242EA /* CGMath */,
+				8EDDF619C671AACF12D693B8 /* CollectionKit */,
+				E7F41C198C356C44A8875508 /* Constructs */,
+				D0D467C3FAE49E659A92B6E3 /* KeyValueStore */,
+				BADE8CD6C3B6196CE4148BCA /* MarkdownUI */,
+				28DDEF73D00BAAB369F224C3 /* Markin */,
+				7D6069FCE84946ED353CFD11 /* MathKit */,
+				882687B25E3236CF29443149 /* MessagePackKit */,
+				6DE5404E2B5BF2A6811EA86F /* SensibleStyling */,
+				ED312802535296D995E85EAD /* SettingsUI */,
+				28FA968C0A6B52662403ABBD /* SwiftUIToolbox */,
+				4BCAAA2F3335E2DD5A9A0448 /* SystemKit */,
+				20435EFCE7C3DC65063526C1 /* TextToolbox */,
+				F38A5489BD67B438B3ABA331 /* URLToolbox */,
+				3FD5E67198D821EBE3E2C2DD /* UserDefaultsUI */,
+				10CF6197FAA4BB8D6B8622B7 /* Zipcode */,
+				0FCDAB009BFCFAEFE36D37D8 /* CoreXLSX */,
+			);
+			productName = Dockyard;
+			productReference = 7BFBFD1AC261D8B21107202D /* Dockyard.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B303F6C34EC62EA74B8B5C4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				ORGANIZATIONNAME = "Apparata AB";
+			};
+			buildConfigurationList = 78E8417CF22315BB1E926BFB /* Build configuration list for PBXProject "Dockyard" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 82281A9EA690A148F64371D7;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				37C674658B2E29866AFADB1D /* XCRemoteSwiftPackageReference "AppRouting" */,
+				D12170C71E385C42CD5CCB05 /* XCRemoteSwiftPackageReference "AttributionsUI" */,
+				F8E3F02AC5E1E01F6B9444AE /* XCRemoteSwiftPackageReference "BinaryDataKit" */,
+				AFF1F7090E17BE16847734DF /* XCRemoteSwiftPackageReference "CGMath" */,
+				6DCCC11ECCE8543C02770B38 /* XCRemoteSwiftPackageReference "CollectionKit" */,
+				0157597C625EE7535C936CFB /* XCRemoteSwiftPackageReference "Constructs" */,
+				EC815766BCF725328761B4C7 /* XCRemoteSwiftPackageReference "CoreXLSX" */,
+				CCBE22561ED3833065F60E62 /* XCRemoteSwiftPackageReference "KeyValueStore" */,
+				54FE6EE0A7DA5E226B0D6F2C /* XCRemoteSwiftPackageReference "MarkdownUI" */,
+				FEA1111EE16445367412E0D2 /* XCRemoteSwiftPackageReference "Markin" */,
+				F5A46FEC6B26C426871A7191 /* XCRemoteSwiftPackageReference "MathKit" */,
+				28D90976A71EFDCF7751F70C /* XCRemoteSwiftPackageReference "MessagePackKit" */,
+				1158E5A52608517615B0E97C /* XCRemoteSwiftPackageReference "SensibleStyling" */,
+				5F0D7367B10B37FA6EB52066 /* XCRemoteSwiftPackageReference "SettingsUI" */,
+				2282BBEAAB6C86AC489127C5 /* XCRemoteSwiftPackageReference "SwiftUIToolbox" */,
+				DB8F478029462EA26667F1ED /* XCRemoteSwiftPackageReference "SystemKit" */,
+				07EB5ABD111C44EC1482CBC9 /* XCRemoteSwiftPackageReference "TextToolbox" */,
+				DFCCC3F716CA1FA46C05D9C0 /* XCRemoteSwiftPackageReference "URLToolbox" */,
+				915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */,
+				CC0A37BEF2E4A2342B5B0304 /* XCRemoteSwiftPackageReference "Zipcode" */,
+				901D6353DD48D1A55D7D18FD /* XCLocalSwiftPackageReference "Packages/AppDesign" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6ACEF171D1E7098BFD7FCCEC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				38B859A798C9EC891106C466 /* Dockyard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA6BC0E5D7DDF8E37ACFCA92 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		974611266E1D27F1EED02F48 /* Swift Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Lint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which mint >/dev/null; then\n    /usr/bin/xcrun --sdk macosx mint run swiftlint lint --config \"${PROJECT_DIR}/.swiftlint.yml\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B240D76C4AEE15A19CE459F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7144C2ABF8B91E0EFA76C2D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Apparata AB. All rights reserved.";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.2;
+			};
+			name = Release;
+		};
+		8511DAEE997439C0D5D01848 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Apparata AB. All rights reserved.";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.2;
+			};
+			name = Debug;
+		};
+		8D84527F6498AC32087FDA8D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = DefaultAppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Dockyard/Preview Content\"";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_BITCODE = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.apparata.Dockyard;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A172084078D82AE00FE552A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = DefaultAppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Dockyard/Preview Content\"";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_BITCODE = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.apparata.Dockyard;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3896AD1ECAADB5A630353BCF /* Build configuration list for PBXNativeTarget "Dockyard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D84527F6498AC32087FDA8D /* Debug */,
+				A172084078D82AE00FE552A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		78E8417CF22315BB1E926BFB /* Build configuration list for PBXProject "Dockyard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8511DAEE997439C0D5D01848 /* Debug */,
+				7144C2ABF8B91E0EFA76C2D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		901D6353DD48D1A55D7D18FD /* XCLocalSwiftPackageReference "Packages/AppDesign" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AppDesign;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0157597C625EE7535C936CFB /* XCRemoteSwiftPackageReference "Constructs" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/Constructs.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.1.2;
+			};
+		};
+		07EB5ABD111C44EC1482CBC9 /* XCRemoteSwiftPackageReference "TextToolbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/TextToolbox.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.4.0;
+			};
+		};
+		1158E5A52608517615B0E97C /* XCRemoteSwiftPackageReference "SensibleStyling" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/SensibleStyling.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.2.1;
+			};
+		};
+		2282BBEAAB6C86AC489127C5 /* XCRemoteSwiftPackageReference "SwiftUIToolbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/SwiftUIToolbox.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.0;
+			};
+		};
+		28D90976A71EFDCF7751F70C /* XCRemoteSwiftPackageReference "MessagePackKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/MessagePackKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.4.1;
+			};
+		};
+		37C674658B2E29866AFADB1D /* XCRemoteSwiftPackageReference "AppRouting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/AppRouting.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.2;
+			};
+		};
+		54FE6EE0A7DA5E226B0D6F2C /* XCRemoteSwiftPackageReference "MarkdownUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/MarkdownUI.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.1;
+			};
+		};
+		5F0D7367B10B37FA6EB52066 /* XCRemoteSwiftPackageReference "SettingsUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/SettingsUI.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.5;
+			};
+		};
+		6DCCC11ECCE8543C02770B38 /* XCRemoteSwiftPackageReference "CollectionKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/CollectionKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.1;
+			};
+		};
+		915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/UserDefaultsUI.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.1;
+			};
+		};
+		AFF1F7090E17BE16847734DF /* XCRemoteSwiftPackageReference "CGMath" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/CGMath.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.2;
+			};
+		};
+		CC0A37BEF2E4A2342B5B0304 /* XCRemoteSwiftPackageReference "Zipcode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/Zipcode.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.1;
+			};
+		};
+		CCBE22561ED3833065F60E62 /* XCRemoteSwiftPackageReference "KeyValueStore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/KeyValueStore.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.2;
+			};
+		};
+		D12170C71E385C42CD5CCB05 /* XCRemoteSwiftPackageReference "AttributionsUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/AttributionsUI.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.1;
+			};
+		};
+		DB8F478029462EA26667F1ED /* XCRemoteSwiftPackageReference "SystemKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/SystemKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.8.0;
+			};
+		};
+		DFCCC3F716CA1FA46C05D9C0 /* XCRemoteSwiftPackageReference "URLToolbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/URLToolbox.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.1;
+			};
+		};
+		EC815766BCF725328761B4C7 /* XCRemoteSwiftPackageReference "CoreXLSX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CoreOffice/CoreXLSX.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.14.2;
+			};
+		};
+		F5A46FEC6B26C426871A7191 /* XCRemoteSwiftPackageReference "MathKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/MathKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.2.2;
+			};
+		};
+		F8E3F02AC5E1E01F6B9444AE /* XCRemoteSwiftPackageReference "BinaryDataKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/BinaryDataKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.7;
+			};
+		};
+		FEA1111EE16445367412E0D2 /* XCRemoteSwiftPackageReference "Markin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apparata/Markin.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0FCDAB009BFCFAEFE36D37D8 /* CoreXLSX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC815766BCF725328761B4C7 /* XCRemoteSwiftPackageReference "CoreXLSX" */;
+			productName = CoreXLSX;
+		};
+		10CF6197FAA4BB8D6B8622B7 /* Zipcode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC0A37BEF2E4A2342B5B0304 /* XCRemoteSwiftPackageReference "Zipcode" */;
+			productName = Zipcode;
+		};
+		20435EFCE7C3DC65063526C1 /* TextToolbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07EB5ABD111C44EC1482CBC9 /* XCRemoteSwiftPackageReference "TextToolbox" */;
+			productName = TextToolbox;
+		};
+		2265429C4499CFA2E2D242EA /* CGMath */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFF1F7090E17BE16847734DF /* XCRemoteSwiftPackageReference "CGMath" */;
+			productName = CGMath;
+		};
+		28DDEF73D00BAAB369F224C3 /* Markin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEA1111EE16445367412E0D2 /* XCRemoteSwiftPackageReference "Markin" */;
+			productName = Markin;
+		};
+		28FA968C0A6B52662403ABBD /* SwiftUIToolbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2282BBEAAB6C86AC489127C5 /* XCRemoteSwiftPackageReference "SwiftUIToolbox" */;
+			productName = SwiftUIToolbox;
+		};
+		3FD5E67198D821EBE3E2C2DD /* UserDefaultsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */;
+			productName = UserDefaultsUI;
+		};
+		4BCAAA2F3335E2DD5A9A0448 /* SystemKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB8F478029462EA26667F1ED /* XCRemoteSwiftPackageReference "SystemKit" */;
+			productName = SystemKit;
+		};
+		6DE5404E2B5BF2A6811EA86F /* SensibleStyling */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1158E5A52608517615B0E97C /* XCRemoteSwiftPackageReference "SensibleStyling" */;
+			productName = SensibleStyling;
+		};
+		7D6069FCE84946ED353CFD11 /* MathKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5A46FEC6B26C426871A7191 /* XCRemoteSwiftPackageReference "MathKit" */;
+			productName = MathKit;
+		};
+		882687B25E3236CF29443149 /* MessagePackKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28D90976A71EFDCF7751F70C /* XCRemoteSwiftPackageReference "MessagePackKit" */;
+			productName = MessagePackKit;
+		};
+		8EDDF619C671AACF12D693B8 /* CollectionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6DCCC11ECCE8543C02770B38 /* XCRemoteSwiftPackageReference "CollectionKit" */;
+			productName = CollectionKit;
+		};
+		AD77D7CB9C9B52AE2D0AE2AA /* AppRouting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37C674658B2E29866AFADB1D /* XCRemoteSwiftPackageReference "AppRouting" */;
+			productName = AppRouting;
+		};
+		BADE8CD6C3B6196CE4148BCA /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 54FE6EE0A7DA5E226B0D6F2C /* XCRemoteSwiftPackageReference "MarkdownUI" */;
+			productName = MarkdownUI;
+		};
+		CFC60E06DC36C25D4B445953 /* AppDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppDesign;
+		};
+		D0D467C3FAE49E659A92B6E3 /* KeyValueStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCBE22561ED3833065F60E62 /* XCRemoteSwiftPackageReference "KeyValueStore" */;
+			productName = KeyValueStore;
+		};
+		DC6D891D2FDA537CACC58F87 /* BinaryDataKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F8E3F02AC5E1E01F6B9444AE /* XCRemoteSwiftPackageReference "BinaryDataKit" */;
+			productName = BinaryDataKit;
+		};
+		E7F41C198C356C44A8875508 /* Constructs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0157597C625EE7535C936CFB /* XCRemoteSwiftPackageReference "Constructs" */;
+			productName = Constructs;
+		};
+		EA3785FA72FB763346EF2FAC /* AttributionsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D12170C71E385C42CD5CCB05 /* XCRemoteSwiftPackageReference "AttributionsUI" */;
+			productName = AttributionsUI;
+		};
+		ED312802535296D995E85EAD /* SettingsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F0D7367B10B37FA6EB52066 /* XCRemoteSwiftPackageReference "SettingsUI" */;
+			productName = SettingsUI;
+		};
+		F38A5489BD67B438B3ABA331 /* URLToolbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFCCC3F716CA1FA46C05D9C0 /* XCRemoteSwiftPackageReference "URLToolbox" */;
+			productName = URLToolbox;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B303F6C34EC62EA74B8B5C4B /* Project object */;
+}
