@@ -5,6 +5,7 @@
 import Foundation
 import SwiftUI
 import AppRouting
+import DockyardEngine
 
 /// An application-wide environment container.
 ///
@@ -24,10 +25,13 @@ public final class AppEnvironment {
 
     /// Application settings used throughout the app.
     public let appSettings: AppSettings
-    
+
+    /// The download + install engine backing the app catalog.
+    public let dockyardEngine: DockyardEngine
+
     /// Auth service
     internal let authService: AuthService
-    
+
     /// Engineering mode
     internal let engineeringMode: EngineeringMode
 
@@ -41,10 +45,12 @@ public final class AppEnvironment {
     ///
     internal init(
         appSettings: AppSettings,
+        dockyardEngine: DockyardEngine,
         authService: AuthService,
         engineeringMode: EngineeringMode
     ) {
         self.appSettings = appSettings
+        self.dockyardEngine = dockyardEngine
         self.authService = authService
         self.engineeringMode = engineeringMode
     }

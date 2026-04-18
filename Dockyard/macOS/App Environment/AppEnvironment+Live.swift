@@ -4,10 +4,18 @@
 
 import Foundation
 import AppRouting
+import DockyardEngine
+import URLToolbox
 
 extension AppEnvironment {
 
     // MARK: - Live AppEnvironment
+
+    /// The production catalog manifest URL.
+    ///
+    /// - TODO: Replace with the real hosted manifest URL when publishing.
+    ///
+    private static let manifestURL = URL(vouchedFor: "https://raw.githubusercontent.com/memfrag/DockyardManifest/main/manifest.json")
 
     /// Builds a live environment configured for production behavior.
     ///
@@ -19,6 +27,7 @@ extension AppEnvironment {
     internal static func live() -> AppEnvironment {
         AppEnvironment(
             appSettings: AppSettings(),
+            dockyardEngine: DockyardEngine(manifestURL: manifestURL),
             authService: AuthService.mock(),
             engineeringMode: EngineeringMode.shared
         )

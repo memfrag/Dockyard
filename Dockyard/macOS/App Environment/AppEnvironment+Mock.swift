@@ -4,6 +4,8 @@
 
 import Foundation
 import AppRouting
+import DockyardEngine
+import URLToolbox
 
 extension AppEnvironment {
 
@@ -17,8 +19,10 @@ extension AppEnvironment {
     /// - Returns: A new ``AppEnvironment`` instance with mocked dependencies.
     ///
     internal static func mock() -> AppEnvironment {
-        AppEnvironment(
+        let manifestURL = URL(vouchedFor: "https://example.com/dockyard/manifest.json")
+        return AppEnvironment(
             appSettings: AppSettings.mock(),
+            dockyardEngine: DockyardEngine(manifestURL: manifestURL),
             authService: AuthService.mock(),
             engineeringMode: EngineeringMode.shared
         )

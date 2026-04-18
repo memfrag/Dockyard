@@ -1,7 +1,6 @@
 only_rules: # only these rules will be applied
     - colon
     - comma
-    - conditional_returns_on_newline
     - control_statement
     - empty_enum_arguments
     - empty_parameters

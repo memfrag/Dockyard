@@ -4,6 +4,7 @@
 
 import SwiftUI
 import AppRouting
+import DockyardEngine
 
 // MARK: - View Extension
 
@@ -29,8 +30,9 @@ extension View {
             .environment(appEnvironment.appSettings)
             .environment(appEnvironment.authService)
             .environment(appEnvironment.engineeringMode)
+            .environment(appEnvironment.dockyardEngine)
     }
-    
+
     #if DEBUG
     func previewEnvironment() -> some View {
         let appEnvironment = AppEnvironment.mock()
@@ -38,6 +40,7 @@ extension View {
             .environment(appEnvironment.appSettings)
             .environment(appEnvironment.authService)
             .environment(appEnvironment.engineeringMode)
+            .environment(appEnvironment.dockyardEngine)
     }
     #endif
 }

@@ -4,13 +4,24 @@ public struct LargeAppCard: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private let iconSystemName: String
-    private let iconBackground: Color
-    private let iconForeground: Color
+    private let icon: AppIconSource
     private let category: String
     private let title: String
     private let description: String
 
+    public init(
+        icon: AppIconSource,
+        category: String,
+        title: String,
+        description: String
+    ) {
+        self.icon = icon
+        self.category = category
+        self.title = title
+        self.description = description
+    }
+
+    /// Convenience initializer for SF-symbol icons.
     public init(
         iconSystemName: String,
         iconBackground: Color,
@@ -19,24 +30,21 @@ public struct LargeAppCard: View {
         title: String,
         description: String
     ) {
-        self.iconSystemName = iconSystemName
-        self.iconBackground = iconBackground
-        self.iconForeground = iconForeground
-        self.category = category
-        self.title = title
-        self.description = description
+        self.init(
+            icon: .symbol(
+                name: iconSystemName,
+                background: iconBackground,
+                foreground: iconForeground
+            ),
+            category: category,
+            title: title,
+            description: description
+        )
     }
 
     public var body: some View {
         HStack(alignment: .center, spacing: 18) {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(iconBackground)
-                .frame(width: 72, height: 72)
-                .overlay {
-                    Image(systemName: iconSystemName)
-                        .font(.system(size: 36, weight: .semibold))
-                        .foregroundStyle(iconForeground)
-                }
+            AppIcon(source: icon, size: 72, cornerRadius: 18)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(category.uppercased())

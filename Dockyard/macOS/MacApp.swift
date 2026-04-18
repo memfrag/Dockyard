@@ -9,12 +9,15 @@ import AppDesign
 
 @main
 struct MacApp: App {
-    
+
     // swiftlint:disable:next weak_delegate
     @NSApplicationDelegateAdaptor(MacAppDelegate.self) var appDelegate
-    
+
     init() {
         AppDesign.apply()
+        Task { @MainActor in
+            try? await AppEnvironment.default.dockyardEngine.refreshCatalog()
+        }
     }
     
     var body: some Scene {

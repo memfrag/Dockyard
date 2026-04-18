@@ -4,13 +4,39 @@ public struct AppCard: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private let iconSystemName: String
-    private let iconBackground: Color
+    private let icon: AppIconSource
     private let category: String
     private let title: String
     private let description: String
-    private let openAction: () -> Void
+    private let actionTitle: String
+    private let actionEnabled: Bool
+    private let progress: Double?
+    private let menuItems: [AppCardMenuItem]
+    private let action: () -> Void
 
+    public init(
+        icon: AppIconSource,
+        category: String,
+        title: String,
+        description: String,
+        actionTitle: String = "Open",
+        actionEnabled: Bool = true,
+        progress: Double? = nil,
+        menuItems: [AppCardMenuItem] = [],
+        action: @escaping () -> Void
+    ) {
+        self.icon = icon
+        self.category = category
+        self.title = title
+        self.description = description
+        self.actionTitle = actionTitle
+        self.actionEnabled = actionEnabled
+        self.progress = progress
+        self.menuItems = menuItems
+        self.action = action
+    }
+
+    /// Convenience initializer for SF-symbol icons with the default "Open" label.
     public init(
         iconSystemName: String,
         iconBackground: Color,
@@ -19,52 +45,56 @@ public struct AppCard: View {
         description: String,
         openAction: @escaping () -> Void
     ) {
-        self.iconSystemName = iconSystemName
-        self.iconBackground = iconBackground
-        self.category = category
-        self.title = title
-        self.description = description
-        self.openAction = openAction
+        self.init(
+            icon: .symbol(name: iconSystemName, background: iconBackground),
+            category: category,
+            title: title,
+            description: description,
+            actionTitle: "Open",
+            action: openAction
+        )
     }
 
     public var body: some View {
-        HStack(spacing: 12) {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(iconBackground)
-                .frame(width: 48, height: 48)
-                .overlay {
-                    Image(systemName: iconSystemName)
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white)
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                AppIcon(source: icon, size: 48, cornerRadius: 10)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(category.uppercased())
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(category.uppercased())
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                Button(action: action) {
+                    Text(actionTitle)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(actionEnabled ? .primary : .secondary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 5)
+                        .background(Color.gray.opacity(0.25), in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .disabled(!actionEnabled)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            Button(action: openAction) {
-                Text("Open")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 5)
-                    .background(Color.gray.opacity(0.25), in: Capsule())
+            if let progress {
+                ProgressView(value: progress.clamped(to: 0...1))
+                    .progressViewStyle(.linear)
+                    .tint(.accentColor)
             }
-            .buttonStyle(.plain)
         }
         .padding(12)
         .background {
@@ -75,6 +105,25 @@ public struct AppCard: View {
                 shape.strokeBorder(Color.gray.opacity(0.2), lineWidth: 1)
             }
         }
+        .contextMenu {
+            if !menuItems.isEmpty {
+                ForEach(menuItems) { item in
+                    Button(role: item.isDestructive ? .destructive : nil, action: item.action) {
+                        if let systemImage = item.systemImage {
+                            Label(item.title, systemImage: systemImage)
+                        } else {
+                            Text(item.title)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private extension Double {
+    func clamped(to range: ClosedRange<Double>) -> Double {
+        min(max(self, range.lowerBound), range.upperBound)
     }
 }
 
@@ -89,20 +138,31 @@ public struct AppCard: View {
             openAction: {}
         )
         AppCard(
-            iconSystemName: "video.fill",
-            iconBackground: .red,
+            icon: .symbol(name: "arrow.down.circle.fill", background: .indigo),
             category: "Productivity",
             title: "Meet",
             description: "One-click video calls with anyone",
-            openAction: {}
+            actionTitle: "Install",
+            action: {}
         )
         AppCard(
-            iconSystemName: "bubble.left.and.bubble.right.fill",
-            iconBackground: .purple,
+            icon: .symbol(name: "bubble.left.and.bubble.right.fill", background: .purple),
             category: "Productivity",
             title: "Chat",
             description: "Team channels, DMs, and threads",
-            openAction: {}
+            actionTitle: "38%",
+            actionEnabled: false,
+            progress: 0.38,
+            action: {}
+        )
+        AppCard(
+            icon: .symbol(name: "cloud.fill", background: .cyan),
+            category: "Utilities",
+            title: "Sync",
+            description: "Keeps your stuff in step",
+            actionTitle: "Queued",
+            actionEnabled: false,
+            action: {}
         )
     }
     .padding()

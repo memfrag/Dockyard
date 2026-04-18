@@ -14,6 +14,7 @@
 		29F417BBF16D36CC2174D3C6 /* BinaryDataKit in Frameworks */ = {isa = PBXBuildFile; productRef = DC6D891D2FDA537CACC58F87 /* BinaryDataKit */; };
 		2D15D4A196DF308EF7334D5A /* CollectionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8EDDF619C671AACF12D693B8 /* CollectionKit */; };
 		40D38F1C6BFE5F2DC2C626EA /* SettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = ED312802535296D995E85EAD /* SettingsUI */; };
+		414315692F940DC70077C20F /* DockyardEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 414315682F940DC70077C20F /* DockyardEngine */; };
 		4376CFC9A25BC5AD97F0C9AF /* MathKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7D6069FCE84946ED353CFD11 /* MathKit */; };
 		49BA70A737D05BD8080BB5A9 /* URLToolbox in Frameworks */ = {isa = PBXBuildFile; productRef = F38A5489BD67B438B3ABA331 /* URLToolbox */; };
 		76D8E3FD8B4CCE198315AA4E /* KeyValueStore in Frameworks */ = {isa = PBXBuildFile; productRef = D0D467C3FAE49E659A92B6E3 /* KeyValueStore */; };
@@ -49,6 +50,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A90509D1E5DE4C6EE1622A9 /* AppDesign in Frameworks */,
+				414315692F940DC70077C20F /* DockyardEngine in Frameworks */,
 				7F51A022B7711AD6B32E1B31 /* AppRouting in Frameworks */,
 				203900AA7722330D7F52F4AF /* AttributionsUI in Frameworks */,
 				29F417BBF16D36CC2174D3C6 /* BinaryDataKit in Frameworks */,
@@ -111,7 +113,6 @@
 			buildConfigurationList = 3896AD1ECAADB5A630353BCF /* Build configuration list for PBXNativeTarget "Dockyard" */;
 			buildPhases = (
 				B240D76C4AEE15A19CE459F1 /* Sources */,
-				974611266E1D27F1EED02F48 /* Swift Lint */,
 				AA6BC0E5D7DDF8E37ACFCA92 /* Resources */,
 				BAF4B714EDEAC8D09F4FBC9C /* Frameworks */,
 			);
@@ -145,6 +146,7 @@
 				3FD5E67198D821EBE3E2C2DD /* UserDefaultsUI */,
 				10CF6197FAA4BB8D6B8622B7 /* Zipcode */,
 				0FCDAB009BFCFAEFE36D37D8 /* CoreXLSX */,
+				414315682F940DC70077C20F /* DockyardEngine */,
 			);
 			productName = Dockyard;
 			productReference = 7BFBFD1AC261D8B21107202D /* Dockyard.app */;
@@ -191,6 +193,7 @@
 				915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */,
 				CC0A37BEF2E4A2342B5B0304 /* XCRemoteSwiftPackageReference "Zipcode" */,
 				901D6353DD48D1A55D7D18FD /* XCLocalSwiftPackageReference "Packages/AppDesign" */,
+				414315672F940DC70077C20F /* XCLocalSwiftPackageReference "Packages/DockyardEngine" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6ACEF171D1E7098BFD7FCCEC /* Products */;
@@ -211,28 +214,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		974611266E1D27F1EED02F48 /* Swift Lint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swift Lint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null; then\n    /usr/bin/xcrun --sdk macosx mint run swiftlint lint --config \"${PROJECT_DIR}/.swiftlint.yml\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B240D76C4AEE15A19CE459F1 /* Sources */ = {
@@ -460,6 +441,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		414315672F940DC70077C20F /* XCLocalSwiftPackageReference "Packages/DockyardEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/DockyardEngine;
+		};
 		901D6353DD48D1A55D7D18FD /* XCLocalSwiftPackageReference "Packages/AppDesign" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/AppDesign;
@@ -664,6 +649,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */;
 			productName = UserDefaultsUI;
+		};
+		414315682F940DC70077C20F /* DockyardEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DockyardEngine;
 		};
 		4BCAAA2F3335E2DD5A9A0448 /* SystemKit */ = {
 			isa = XCSwiftPackageProductDependency;

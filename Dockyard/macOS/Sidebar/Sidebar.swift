@@ -91,6 +91,9 @@ struct Sidebar: View {
         }
         .toolbar {
             ToolbarItem(placement: .automatic) {
+                DownloadsToolbarButton()
+            }
+            ToolbarItem(placement: .automatic) {
                 Button {
                     appearance = appearance.next
                 } label: {
