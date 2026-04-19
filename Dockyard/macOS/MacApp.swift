@@ -28,7 +28,7 @@ struct MacApp: App {
     
     var body: some Scene {
         MainWindow()
-        MenuBarWindow()
+        //MenuBarWindow()
         SettingsWindow()
         AboutWindow(developedBy: "Apparata AB",
                     attributionsWindowID: AttributionsWindow.windowID)
