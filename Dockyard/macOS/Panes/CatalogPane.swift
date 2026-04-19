@@ -10,11 +10,33 @@ import DockyardEngine
 struct CatalogPane: View {
 
     let title: String
+    let pretitle: String
     let category: String?
     let sectionTitle: String
     let emptyTitle: String
     let emptyMessage: String
     let subtitle: (DockyardEngine, [CatalogEntry]) -> String
+    let searchQuery: String?
+
+    init(
+        title: String,
+        category: String?,
+        sectionTitle: String,
+        emptyTitle: String,
+        emptyMessage: String,
+        subtitle: @escaping (DockyardEngine, [CatalogEntry]) -> String,
+        pretitle: String = "Category",
+        searchQuery: String? = nil
+    ) {
+        self.title = title
+        self.pretitle = pretitle
+        self.category = category
+        self.sectionTitle = sectionTitle
+        self.emptyTitle = emptyTitle
+        self.emptyMessage = emptyMessage
+        self.subtitle = subtitle
+        self.searchQuery = searchQuery
+    }
 
     @Environment(DockyardEngine.self) private var engine
 
@@ -22,8 +44,27 @@ struct CatalogPane: View {
     @State private var navigationPath = NavigationPath()
 
     private var entries: [CatalogEntry] {
-        guard let category else { return engine.catalog }
-        return engine.catalog.filter { $0.category == category }
+        var result = engine.catalog
+        if let category {
+            result = result.filter { $0.category == category }
+        }
+        if let tokens = searchTokens {
+            result = result.filter { entry in
+                let haystack = [entry.displayName, entry.summary, entry.category]
+                    .joined(separator: " ")
+                    .lowercased()
+                return tokens.allSatisfy { haystack.contains($0) }
+            }
+        }
+        return result
+    }
+
+    private var searchTokens: [String]? {
+        guard let query = searchQuery?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !query.isEmpty else { return nil }
+        return query.lowercased()
+            .split(whereSeparator: { $0.isWhitespace })
+            .map(String.init)
     }
 
     var body: some View {
@@ -31,7 +72,7 @@ struct CatalogPane: View {
             NavigationStack(path: $navigationPath) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 20) {
-                        PaneHeader(title, subtitle: "Category", description: subtitle(engine, entries))
+                        PaneHeader(title, subtitle: pretitle, description: subtitle(engine, entries))
 
                         if entries.isEmpty {
                             emptyState

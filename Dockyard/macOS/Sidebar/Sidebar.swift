@@ -84,27 +84,31 @@ struct Sidebar: View {
             .searchable(text: $searchText, placement: .sidebar)
             .navigationSplitViewColumnWidth(220)
         } detail: {
-            switch selection {
-            case .today:
-                TodayPane()
-            case .discover:
-                DiscoverPane()
-            case .installed:
-                InstalledPane()
-            case .design:
-                DesignPane()
-            case .development:
-                DevelopmentPane()
-            case .entertainment:
-                EntertainmentPane()
-            case .finance:
-                FinancePane()
-            case .productivity:
-                ProductivityPane()
-            case .editorial:
-                EditorialPane()
-            default:
-                EmptyPane()
+            if isSearching {
+                searchResultsPane
+            } else {
+                switch selection {
+                case .today:
+                    TodayPane()
+                case .discover:
+                    DiscoverPane()
+                case .installed:
+                    InstalledPane()
+                case .design:
+                    DesignPane()
+                case .development:
+                    DevelopmentPane()
+                case .entertainment:
+                    EntertainmentPane()
+                case .finance:
+                    FinancePane()
+                case .productivity:
+                    ProductivityPane()
+                case .editorial:
+                    EditorialPane()
+                default:
+                    EmptyPane()
+                }
             }
         }
         .onChange(of: appSettings.isEditorialModeEnabled) { _, isEnabled in
@@ -125,6 +129,29 @@ struct Sidebar: View {
                 .help(appearance.label)
             }
         }
+    }
+
+    // MARK: - Search
+
+    private var isSearching: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var searchResultsPane: some View {
+        let query = searchText
+        return CatalogPane(
+            title: "Search",
+            category: nil,
+            sectionTitle: "Results",
+            emptyTitle: "No matches",
+            emptyMessage: "Try a different query.",
+            subtitle: { _, entries in
+                let count = entries.count
+                return "\(count) result\(count == 1 ? "" : "s") for \u{201C}\(query)\u{201D}"
+            },
+            pretitle: "Search",
+            searchQuery: query
+        )
     }
 }
 
