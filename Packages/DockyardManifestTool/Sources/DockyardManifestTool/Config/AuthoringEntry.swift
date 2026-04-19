@@ -1,4 +1,5 @@
 import Foundation
+import DockyardEngine
 
 struct AuthoringEntry: Codable, Sendable {
 
@@ -14,4 +15,5 @@ struct AuthoringEntry: Codable, Sendable {
     let iconURL: URL
     let github: GitHub
     let assetPattern: String?      // optional regex; falls back to first *.dmg
+    let channel: ReleaseChannel?   // optional; defaults to .release when omitted
 }

@@ -8,17 +8,23 @@ public struct LargeAppCard: View {
     private let category: String
     private let title: String
     private let description: String
+    private let channel: String?
+    private let onOpenDetails: (() -> Void)?
 
     public init(
         icon: AppIconSource,
         category: String,
         title: String,
-        description: String
+        description: String,
+        channel: String?,
+        onOpenDetails: (() -> Void)? = nil
     ) {
         self.icon = icon
         self.category = category
         self.title = title
         self.description = description
+        self.channel = channel
+        self.onOpenDetails = onOpenDetails
     }
 
     /// Convenience initializer for SF-symbol icons.
@@ -28,7 +34,9 @@ public struct LargeAppCard: View {
         iconForeground: Color = .white,
         category: String,
         title: String,
-        description: String
+        description: String,
+        channel: String?,
+        onOpenDetails: (() -> Void)? = nil
     ) {
         self.init(
             icon: .symbol(
@@ -38,7 +46,9 @@ public struct LargeAppCard: View {
             ),
             category: category,
             title: title,
-            description: description
+            description: description,
+            channel: channel,
+            onOpenDetails: onOpenDetails
         )
     }
 
@@ -47,11 +57,16 @@ public struct LargeAppCard: View {
             AppIcon(source: icon, size: 72, cornerRadius: 18)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(category.uppercased())
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    Text(category.uppercased())
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                    if let channel {
+                        ChannelBadge(channel)
+                    }
+                }
                 Text(title)
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -75,6 +90,10 @@ public struct LargeAppCard: View {
                 shape.strokeBorder(Color.gray.opacity(0.2), lineWidth: 1)
             }
         }
+        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .onTapGesture {
+            onOpenDetails?()
+        }
     }
 }
 
@@ -85,14 +104,16 @@ public struct LargeAppCard: View {
             iconBackground: .black,
             category: "New to Hub",
             title: "Deploy",
-            description: "A thin client over the deploy pipeline. Now in beta."
+            description: "A thin client over the deploy pipeline. Now in beta.",
+            channel: nil
         )
         LargeAppCard(
             iconSystemName: "video.fill",
             iconBackground: .red,
             category: "Updated",
             title: "Meet 1.3",
-            description: "Picture-in-picture when you switch windows."
+            description: "Picture-in-picture when you switch windows.",
+            channel: "Beta"
         )
     }
     .padding()

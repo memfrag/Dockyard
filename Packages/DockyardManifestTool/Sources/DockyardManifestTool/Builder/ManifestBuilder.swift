@@ -36,7 +36,12 @@ struct ManifestBuilder {
                 version: release.versionFromTag,
                 dmgURL: asset.browserDownloadURL,
                 dmgSize: asset.size,
-                dmgSHA256: sha256
+                dmgSHA256: sha256,
+                github: GitHubRepo(
+                    owner: authoring.github.owner,
+                    repo: authoring.github.repo
+                ),
+                channel: authoring.channel ?? .release
             )
             entries.append(entry)
         }

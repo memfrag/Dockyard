@@ -8,31 +8,37 @@ public struct AppCard: View {
     private let category: String
     private let title: String
     private let description: String
+    private let channel: String?
     private let actionTitle: String
     private let actionEnabled: Bool
     private let progress: Double?
     private let menuItems: [AppCardMenuItem]
     private let action: () -> Void
+    private let onOpenDetails: (() -> Void)?
 
     public init(
         icon: AppIconSource,
         category: String,
         title: String,
         description: String,
+        channel: String?,
         actionTitle: String = "Open",
         actionEnabled: Bool = true,
         progress: Double? = nil,
         menuItems: [AppCardMenuItem] = [],
+        onOpenDetails: (() -> Void)? = nil,
         action: @escaping () -> Void
     ) {
         self.icon = icon
         self.category = category
         self.title = title
         self.description = description
+        self.channel = channel
         self.actionTitle = actionTitle
         self.actionEnabled = actionEnabled
         self.progress = progress
         self.menuItems = menuItems
+        self.onOpenDetails = onOpenDetails
         self.action = action
     }
 
@@ -43,6 +49,8 @@ public struct AppCard: View {
         category: String,
         title: String,
         description: String,
+        channel: String?,
+        onOpenDetails: (() -> Void)? = nil,
         openAction: @escaping () -> Void
     ) {
         self.init(
@@ -50,7 +58,9 @@ public struct AppCard: View {
             category: category,
             title: title,
             description: description,
+            channel: channel,
             actionTitle: "Open",
+            onOpenDetails: onOpenDetails,
             action: openAction
         )
     }
@@ -61,11 +71,16 @@ public struct AppCard: View {
                 AppIcon(source: icon, size: 48, cornerRadius: 10)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(category.uppercased())
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.tertiary)
-                        .lineLimit(1)
+                    HStack(spacing: 8) {
+                        Text(category.uppercased())
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(1)
+                        if let channel {
+                            ChannelBadge(channel)
+                        }
+                    }
                     Text(title)
                         .font(.headline)
                         .foregroundStyle(.primary)
@@ -118,6 +133,10 @@ public struct AppCard: View {
                 }
             }
         }
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .onTapGesture {
+            onOpenDetails?()
+        }
     }
 }
 
@@ -135,6 +154,7 @@ private extension Double {
             category: "People",
             title: "Directory",
             description: "Find people by team, role, or name",
+            channel: nil,
             openAction: {}
         )
         AppCard(
@@ -142,6 +162,7 @@ private extension Double {
             category: "Productivity",
             title: "Meet",
             description: "One-click video calls with anyone",
+            channel: "Beta",
             actionTitle: "Install",
             action: {}
         )
@@ -150,6 +171,7 @@ private extension Double {
             category: "Productivity",
             title: "Chat",
             description: "Team channels, DMs, and threads",
+            channel: nil,
             actionTitle: "38%",
             actionEnabled: false,
             progress: 0.38,
@@ -160,6 +182,7 @@ private extension Double {
             category: "Utilities",
             title: "Sync",
             description: "Keeps your stuff in step",
+            channel: nil,
             actionTitle: "Queued",
             actionEnabled: false,
             action: {}

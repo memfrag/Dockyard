@@ -19,6 +19,7 @@ struct CatalogPane: View {
     @Environment(DockyardEngine.self) private var engine
 
     @State private var iconURLs: [CatalogEntry.ID: URL] = [:]
+    @State private var navigationPath = NavigationPath()
 
     private var entries: [CatalogEntry] {
         guard let category else { return engine.catalog }
@@ -27,7 +28,7 @@ struct CatalogPane: View {
 
     var body: some View {
         Pane {
-            NavigationStack {
+            NavigationStack(path: $navigationPath) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 20) {
                         PaneHeader(title, subtitle: "Category", description: subtitle(engine, entries))
@@ -40,6 +41,9 @@ struct CatalogPane: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(32)
+                }
+                .navigationDestination(for: CatalogEntry.self) { entry in
+                    AppDetailsView(entry)
                 }
             }
         }
@@ -66,7 +70,12 @@ struct CatalogPane: View {
 
     private var cardItems: [AppCardItem] {
         entries.map { entry in
-            AppCardFactory.makeItem(for: entry, engine: engine, iconURL: iconURLs[entry.id])
+            AppCardFactory.makeItem(
+                for: entry,
+                engine: engine,
+                iconURL: iconURLs[entry.id],
+                onOpenDetails: { navigationPath.append(entry) }
+            )
         }
     }
 

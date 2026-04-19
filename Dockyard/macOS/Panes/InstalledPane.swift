@@ -14,10 +14,11 @@ struct InstalledPane: View {
 
     @State private var iconURLs: [CatalogEntry.ID: URL] = [:]
     @State private var uninstallTarget: InstalledApp?
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
         Pane {
-            NavigationStack {
+            NavigationStack(path: $navigationPath) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 20) {
                         PaneHeader(
@@ -34,6 +35,9 @@ struct InstalledPane: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(32)
+                }
+                .navigationDestination(for: CatalogEntry.self) { entry in
+                    AppDetailsView(entry)
                 }
             }
         }
@@ -82,6 +86,7 @@ struct InstalledPane: View {
                 category: entry?.category ?? "Installed",
                 title: installed.displayName,
                 description: "Version \(installed.version)",
+                channel: entry?.channel.stringIfNotRelease,
                 actionTitle: "Open",
                 actionEnabled: true,
                 action: { NSWorkspace.shared.open(installed.bundlePath) },
@@ -99,7 +104,10 @@ struct InstalledPane: View {
                     ) {
                         uninstallTarget = installed
                     }
-                ]
+                ],
+                onOpenDetails: entry.map { resolved in
+                    { navigationPath.append(resolved) }
+                }
             )
         }
     }

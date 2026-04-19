@@ -12,7 +12,8 @@ enum AppCardFactory {
     static func makeItem(
         for entry: CatalogEntry,
         engine: DockyardEngine,
-        iconURL: URL?
+        iconURL: URL?,
+        onOpenDetails: (() -> Void)? = nil
     ) -> AppCardItem {
         AppCardItem(
             id: entry.id,
@@ -20,10 +21,12 @@ enum AppCardFactory {
             category: entry.category,
             title: entry.displayName,
             description: entry.summary,
+            channel: entry.channel.stringIfNotRelease,
             actionTitle: actionTitle(for: entry, engine: engine),
             actionEnabled: actionEnabled(for: entry, engine: engine),
             progress: (engine.phases[entry.id] ?? .idle).downloadFraction,
-            action: { performAction(for: entry, engine: engine) }
+            action: { performAction(for: entry, engine: engine) },
+            onOpenDetails: onOpenDetails
         )
     }
 

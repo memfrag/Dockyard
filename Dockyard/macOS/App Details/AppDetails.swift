@@ -10,6 +10,8 @@ struct AppDetailsView: View {
 
     @Environment(DockyardEngine.self) private var engine
 
+    @Environment(\.openURL) private var openURL
+
     @State private var iconURL: URL?
 
     private let entry: CatalogEntry
@@ -39,13 +41,17 @@ struct AppDetailsView: View {
                             AppDetailsHeader(
                                 entry.displayName,
                                 subtitle: entry.category,
-                                description: entry.summary
+                                description: entry.summary,
+                                channel: entry.channel.stringIfNotRelease
                             )
                             .padding(.bottom, 16)
 
                             HStack {
                                 actionButton
-                                githubButton
+
+                                if let githubURL = entry.github?.url {
+                                    githubButton(url: githubURL)
+                                }
                             }
                         }
                     }
@@ -64,7 +70,7 @@ struct AppDetailsView: View {
                     Divider()
                         .opacity(0.5)
 
-                    ScreenshotsSection(urls: [])
+                    ScreenshotsSection(urls: [], edgePadding: 32)
 
                     Divider()
                         .opacity(0.5)
@@ -121,9 +127,9 @@ struct AppDetailsView: View {
         }
     }
 
-    @ViewBuilder private var githubButton: some View {
+    @ViewBuilder private func githubButton(url: URL) -> some View {
         Button {
-            //
+            openURL(url)
         } label: {
             HStack(spacing: 4) {
                 Image(.Logo.gitHubLogo)
@@ -146,13 +152,11 @@ struct AppDetailsView: View {
 
 #Preview("Dark Mode") {
     AppDetailsView(.Mock.repoRanger)
-        .padding()
         .previewEnvironment()
 }
 
 #Preview("Light Mode") {
     AppDetailsView(.Mock.repoRanger)
-        .padding()
         .colorScheme(.light)
         .previewEnvironment()
 }

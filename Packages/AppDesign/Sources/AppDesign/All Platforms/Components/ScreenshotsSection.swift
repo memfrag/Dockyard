@@ -3,11 +3,13 @@ import SwiftUI
 public struct ScreenshotsSection: View {
 
     private let urls: [URL]
+    private let edgePadding: CGFloat
 
     @State private var visibleIndex: Int? = 0
 
-    public init(urls: [URL]) {
+    public init(urls: [URL], edgePadding: CGFloat) {
         self.urls = urls
+        self.edgePadding = edgePadding
     }
 
     /// The IDs the ScrollView paginates through. Uses URL-backed IDs when
@@ -36,8 +38,10 @@ public struct ScreenshotsSection: View {
             }
             .scrollPosition(id: $visibleIndex, anchor: .leading)
             .scrollTargetBehavior(.viewAligned)
+            .contentMargins(.horizontal, edgePadding, for: .scrollContent)
             .frame(height: 222)
             .frame(maxWidth: .infinity)
+            .padding(.horizontal, -edgePadding)
         }
     }
 
@@ -100,6 +104,6 @@ private extension Int {
 }
 
 #Preview {
-    ScreenshotsSection(urls: [])
-        .padding()
+    ScreenshotsSection(urls: [], edgePadding: 32)
+        .padding(32)
 }

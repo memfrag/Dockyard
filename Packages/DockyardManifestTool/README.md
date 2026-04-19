@@ -18,7 +18,8 @@ Save as `dockyard.config.json` anywhere you like:
       "summary": "Short card description.",
       "iconURL": "https://your.cdn/dockyard/icons/widget-v1.png",
       "github": { "owner": "apparata", "repo": "widget-mac" },
-      "assetPattern": "^Widget-.*\\.dmg$"
+      "assetPattern": "^Widget-.*\\.dmg$",
+      "channel": "Beta"
     }
   ]
 }
@@ -27,6 +28,7 @@ Save as `dockyard.config.json` anywhere you like:
 - `id` **must** equal the built `.app`'s `CFBundleIdentifier`. The Dockyard engine validates this at install time.
 - `assetPattern` is optional; omit it and the tool picks the first `*.dmg` in the release.
 - `iconURL` must already be hosted somewhere — the tool does **not** upload the icon, it just copies the URL into the manifest. Use a versioned path (e.g. `widget-v2.png`) when you change the bitmap; the engine caches icons purely by URL and does not revalidate.
+- `channel` is optional; values are `"Beta"` or `"Release"`. Omit for release apps — the builder defaults to `Release`.
 
 ## 2. (Optional) store a GitHub token
 

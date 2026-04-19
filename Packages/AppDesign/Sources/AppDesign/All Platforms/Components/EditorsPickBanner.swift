@@ -18,6 +18,7 @@ public struct EditorsPickBanner: View {
     private let actionEnabled: Bool
     private let progress: Double?
     private let action: () -> Void
+    private let onOpenDetails: (() -> Void)?
 
     private let primaryText: Color = .white
     private let secondaryText: Color = .white.opacity(0.75)
@@ -34,6 +35,7 @@ public struct EditorsPickBanner: View {
         actionTitle: String = "Open",
         actionEnabled: Bool = true,
         progress: Double? = nil,
+        onOpenDetails: (() -> Void)? = nil,
         action: @escaping () -> Void
     ) {
         self.category = category
@@ -46,6 +48,7 @@ public struct EditorsPickBanner: View {
         self.actionTitle = actionTitle
         self.actionEnabled = actionEnabled
         self.progress = progress
+        self.onOpenDetails = onOpenDetails
         self.action = action
     }
 
@@ -62,6 +65,7 @@ public struct EditorsPickBanner: View {
         actionTitle: String = "Open",
         actionEnabled: Bool = true,
         progress: Double? = nil,
+        onOpenDetails: (() -> Void)? = nil,
         action: @escaping () -> Void
     ) {
         self.init(
@@ -79,6 +83,7 @@ public struct EditorsPickBanner: View {
             actionTitle: actionTitle,
             actionEnabled: actionEnabled,
             progress: progress,
+            onOpenDetails: onOpenDetails,
             action: action
         )
     }
@@ -153,6 +158,10 @@ public struct EditorsPickBanner: View {
                         endPoint: .bottomTrailing
                     )
                 )
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .onTapGesture {
+            onOpenDetails?()
         }
     }
 }

@@ -12,10 +12,11 @@ struct TodayPane: View {
     @Environment(DockyardEngine.self) private var engine
 
     @State private var iconURLs: [CatalogEntry.ID: URL] = [:]
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
         Pane {
-            NavigationStack {
+            NavigationStack(path: $navigationPath) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 0) {
                         header
@@ -29,6 +30,9 @@ struct TodayPane: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(32)
+                }
+                .navigationDestination(for: CatalogEntry.self) { entry in
+                    AppDetailsView(entry)
                 }
             }
         }
@@ -70,7 +74,8 @@ struct TodayPane: View {
                     return AppCardFactory.makeItem(
                         for: entry,
                         engine: engine,
-                        iconURL: iconURLs[entry.id]
+                        iconURL: iconURLs[entry.id],
+                        onOpenDetails: { navigationPath.append(entry) }
                     )
                 })
             }
@@ -97,6 +102,7 @@ struct TodayPane: View {
                     actionTitle: AppCardFactory.actionTitle(for: heroEntry, engine: engine),
                     actionEnabled: AppCardFactory.actionEnabled(for: heroEntry, engine: engine),
                     progress: (engine.phases[heroEntry.id] ?? .idle).downloadFraction,
+                    onOpenDetails: { navigationPath.append(heroEntry) },
                     action: { AppCardFactory.performAction(for: heroEntry, engine: engine) }
                 )
             }
@@ -109,7 +115,9 @@ struct TodayPane: View {
                             icon: iconSource(for: entry),
                             category: highlight.category,
                             title: entry.displayName,
-                            description: highlight.description
+                            description: highlight.description,
+                            channel: entry.channel.stringIfNotRelease,
+                            onOpenDetails: { navigationPath.append(entry) }
                         )
                         .frame(maxHeight: .infinity)
                     }
