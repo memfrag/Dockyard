@@ -4,8 +4,11 @@
 
 import SwiftUI
 import SwiftUIToolbox
+import Sparkle
 
 struct MainWindow: Scene {
+
+    let updater: SPUUpdater
 
     @AppStorage("appearancePreference") private var appearance: AppearancePreference = .system
 
@@ -20,17 +23,18 @@ struct MainWindow: Scene {
         }
         .commands {
             AboutCommand()
+            CheckForUpdatesCommand(updater: updater)
             SidebarCommands()
             ExportCommands()
             AlwaysOnTopCommand()
             HelpCommands()
-            
+
             /// Add a menu with custom commands
             MyCommands()
-            
+
             // Remove the "New Window" option from the File menu.
             CommandGroup(replacing: .newItem, addition: { })
         }
-        
+
     }
 }

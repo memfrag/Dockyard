@@ -14,6 +14,7 @@
 		29F417BBF16D36CC2174D3C6 /* BinaryDataKit in Frameworks */ = {isa = PBXBuildFile; productRef = DC6D891D2FDA537CACC58F87 /* BinaryDataKit */; };
 		2D15D4A196DF308EF7334D5A /* CollectionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8EDDF619C671AACF12D693B8 /* CollectionKit */; };
 		40D38F1C6BFE5F2DC2C626EA /* SettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = ED312802535296D995E85EAD /* SettingsUI */; };
+		4132BD442F957E8700D1E3CA /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 4132BD432F957E8700D1E3CA /* Sparkle */; };
 		414315692F940DC70077C20F /* DockyardEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 414315682F940DC70077C20F /* DockyardEngine */; };
 		4376CFC9A25BC5AD97F0C9AF /* MathKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7D6069FCE84946ED353CFD11 /* MathKit */; };
 		49BA70A737D05BD8080BB5A9 /* URLToolbox in Frameworks */ = {isa = PBXBuildFile; productRef = F38A5489BD67B438B3ABA331 /* URLToolbox */; };
@@ -62,6 +63,7 @@
 				856B6C375164F5D44B176580 /* Markin in Frameworks */,
 				4376CFC9A25BC5AD97F0C9AF /* MathKit in Frameworks */,
 				1BE339919F24B384BBF3D60B /* MessagePackKit in Frameworks */,
+				4132BD442F957E8700D1E3CA /* Sparkle in Frameworks */,
 				8B816404D75803EC2303B1C1 /* SensibleStyling in Frameworks */,
 				40D38F1C6BFE5F2DC2C626EA /* SettingsUI in Frameworks */,
 				053C976E527D5696AAF60839 /* SwiftUIToolbox in Frameworks */,
@@ -147,6 +149,7 @@
 				10CF6197FAA4BB8D6B8622B7 /* Zipcode */,
 				0FCDAB009BFCFAEFE36D37D8 /* CoreXLSX */,
 				414315682F940DC70077C20F /* DockyardEngine */,
+				4132BD432F957E8700D1E3CA /* Sparkle */,
 			);
 			productName = Dockyard;
 			productReference = 7BFBFD1AC261D8B21107202D /* Dockyard.app */;
@@ -194,6 +197,7 @@
 				CC0A37BEF2E4A2342B5B0304 /* XCRemoteSwiftPackageReference "Zipcode" */,
 				901D6353DD48D1A55D7D18FD /* XCLocalSwiftPackageReference "Packages/AppDesign" */,
 				414315672F940DC70077C20F /* XCLocalSwiftPackageReference "Packages/DockyardEngine" */,
+				4132BD422F957E8700D1E3CA /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6ACEF171D1E7098BFD7FCCEC /* Products */;
@@ -372,6 +376,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dockyard/macOS/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Apparata AB. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -394,14 +400,18 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				AUTOMATION_APPLE_EVENTS = NO;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Dockyard/Preview Content\"";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = DR5YAK7GKS;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_BITCODE = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dockyard/macOS/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Apparata AB. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -498,6 +508,14 @@
 			requirement = {
 				kind = exactVersion;
 				version = 0.9.2;
+			};
+		};
+		4132BD422F957E8700D1E3CA /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 2.9.1;
 			};
 		};
 		54FE6EE0A7DA5E226B0D6F2C /* XCRemoteSwiftPackageReference "MarkdownUI" */ = {
@@ -649,6 +667,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 915A91538A31B008CAA08688 /* XCRemoteSwiftPackageReference "UserDefaultsUI" */;
 			productName = UserDefaultsUI;
+		};
+		4132BD432F957E8700D1E3CA /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4132BD422F957E8700D1E3CA /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		414315682F940DC70077C20F /* DockyardEngine */ = {
 			isa = XCSwiftPackageProductDependency;
