@@ -16,16 +16,21 @@ struct ManifestBuilder {
         entries.reserveCapacity(config.apps.count)
 
         for authoring in config.apps {
-            let release = try await api.latestRelease(
-                owner: authoring.github.owner,
-                repo: authoring.github.repo
-            )
+            let owner = authoring.github.owner
+            let repo = authoring.github.repo
+
+            let release = try await api.latestRelease(owner: owner, repo: repo)
             let asset = try AssetSelector.select(from: release.assets, pattern: authoring.assetPattern)
 
             var sha256: String? = assetDigestSHA256(asset)
             if sha256 == nil, let hasher {
                 sha256 = try await hasher.sha256(of: asset.browserDownloadURL)
             }
+
+            let screenshotURLs = try await fetchScreenshotURLs(owner: owner, repo: repo)
+            let aboutURL = try await api
+                .getFile(owner: owner, repo: repo, path: ".dockyard/about.md")?
+                .downloadURL
 
             let entry = CatalogEntry(
                 id: authoring.id,
@@ -37,16 +42,28 @@ struct ManifestBuilder {
                 dmgURL: asset.browserDownloadURL,
                 dmgSize: asset.size,
                 dmgSHA256: sha256,
-                github: GitHubRepo(
-                    owner: authoring.github.owner,
-                    repo: authoring.github.repo
-                ),
-                channel: authoring.channel ?? .release
+                github: GitHubRepo(owner: owner, repo: repo),
+                channel: authoring.channel ?? .release,
+                screenshotURLs: screenshotURLs,
+                aboutURL: aboutURL,
+                releaseNotes: release.body?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
             )
             entries.append(entry)
         }
 
         return CatalogManifest(generatedAt: Date(), apps: entries)
+    }
+
+    private func fetchScreenshotURLs(owner: String, repo: String) async throws -> [URL] {
+        let entries = try await api.listDirectory(
+            owner: owner,
+            repo: repo,
+            path: ".dockyard/screenshots"
+        )
+        return entries
+            .filter { $0.type == "file" && Self.isImage($0.name) }
+            .compactMap { $0.downloadURL }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
     private func assetDigestSHA256(_ asset: GitHubAsset) -> String? {
@@ -56,4 +73,15 @@ struct ManifestBuilder {
         }
         return nil
     }
+
+    private static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "gif", "webp"]
+
+    private static func isImage(_ filename: String) -> Bool {
+        guard let ext = filename.split(separator: ".").last else { return false }
+        return imageExtensions.contains(ext.lowercased())
+    }
+}
+
+private extension String {
+    var nonEmpty: String? { isEmpty ? nil : self }
 }

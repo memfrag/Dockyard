@@ -3,10 +3,12 @@ import Foundation
 struct GitHubRelease: Codable, Sendable {
     let tagName: String
     let assets: [GitHubAsset]
+    let body: String?
 
     enum CodingKeys: String, CodingKey {
         case tagName = "tag_name"
         case assets
+        case body
     }
 
     /// A best-effort "version string" derived from the tag. Strips leading "v" if present.

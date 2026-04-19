@@ -5,6 +5,7 @@
 import SwiftUI
 import AppDesign
 import DockyardEngine
+import MarkdownUI
 
 struct AppDetailsView: View {
 
@@ -13,6 +14,8 @@ struct AppDetailsView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var iconURL: URL?
+    @State private var aboutDocument: MarkdownDocument?
+    @State private var releaseNotesDocument: MarkdownDocument?
 
     private let entry: CatalogEntry
 
@@ -67,23 +70,30 @@ struct AppDetailsView: View {
                         AppDetailProperty("Developer", value: "Martin Johannesson")
                     }
 
-                    Divider()
-                        .opacity(0.5)
-
-                    ScreenshotsSection(urls: [], edgePadding: 32)
-
-                    Divider()
-                        .opacity(0.5)
-
-                    VStack(alignment: .leading) {
-                        AppDetailsSectionHeader("What's New")
+                    if !entry.screenshotURLs.isEmpty {
+                        Divider()
+                            .opacity(0.5)
+                        ScreenshotsSection(urls: entry.screenshotURLs, edgePadding: 32)
                     }
 
-                    Divider()
-                        .opacity(0.5)
+                    if let releaseNotesDocument {
+                        Divider()
+                            .opacity(0.5)
+                        VStack(alignment: .leading, spacing: 8) {
+                            AppDetailsSectionHeader("What's New in \(entry.version)")
+                            Markdown(releaseNotesDocument, lazy: false)
+                                .markdownStyle(MarkdownStyle())
+                        }
+                    }
 
-                    VStack(alignment: .leading) {
-                        AppDetailsSectionHeader("About")
+                    if let aboutDocument {
+                        Divider()
+                            .opacity(0.5)
+                        VStack(alignment: .leading, spacing: 8) {
+                            AppDetailsSectionHeader("About")
+                            Markdown(aboutDocument, lazy: false)
+                                .markdownStyle(MarkdownStyle())
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -92,6 +102,12 @@ struct AppDetailsView: View {
         }
         .task(id: entry.id) {
             iconURL = try? await engine.iconFile(for: entry.id)
+        }
+        .task(id: entry.aboutURL) {
+            await loadAbout()
+        }
+        .task(id: entry.releaseNotes) {
+            releaseNotesDocument = parseMarkdown(entry.releaseNotes)
         }
     }
 
@@ -145,6 +161,31 @@ struct AppDetailsView: View {
             .background(Color.gray.opacity(0.25), in: Capsule())
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Markdown loading
+
+    private func loadAbout() async {
+        guard let url = entry.aboutURL else {
+            aboutDocument = nil
+            return
+        }
+        guard
+            let (data, _) = try? await URLSession.shared.data(from: url),
+            let text = String(data: data, encoding: .utf8),
+            !text.isEmpty
+        else {
+            aboutDocument = nil
+            return
+        }
+        aboutDocument = parseMarkdown(text)
+    }
+
+    private func parseMarkdown(_ source: String?) -> MarkdownDocument? {
+        guard let source else { return nil }
+        let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return try? MarkdownDocument(trimmed)
     }
 }
 

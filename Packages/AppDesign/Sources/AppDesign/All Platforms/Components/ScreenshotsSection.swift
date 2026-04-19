@@ -12,13 +12,15 @@ public struct ScreenshotsSection: View {
         self.edgePadding = edgePadding
     }
 
-    /// The IDs the ScrollView paginates through. Uses URL-backed IDs when
-    /// real screenshots are available, otherwise placeholder indices.
-    private var indices: [Int] {
-        urls.isEmpty ? [0, 1, 2] : Array(urls.indices)
+    public var body: some View {
+        if urls.isEmpty {
+            EmptyView()
+        } else {
+            content
+        }
     }
 
-    public var body: some View {
+    private var content: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 AppDetailsSectionHeader("Screenshots")
@@ -28,8 +30,8 @@ public struct ScreenshotsSection: View {
 
             ScrollView(.horizontal) {
                 HStack(spacing: 12) {
-                    ForEach(indices, id: \.self) { index in
-                        screenshot(at: index)
+                    ForEach(Array(urls.enumerated()), id: \.offset) { index, url in
+                        screenshot(url: url)
                             .id(index)
                     }
                 }
@@ -48,10 +50,32 @@ public struct ScreenshotsSection: View {
     // MARK: - Subviews
 
     @ViewBuilder
-    private func screenshot(at index: Int) -> some View {
+    private func screenshot(url: URL) -> some View {
+        AsyncImage(url: url) { phase in
+            switch phase {
+            case .empty:
+                placeholder
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            case .failure:
+                placeholder.overlay {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundStyle(.secondary)
+                }
+            @unknown default:
+                placeholder
+            }
+        }
+        .frame(width: 320, height: 210)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var placeholder: some View {
         RoundedRectangle(cornerRadius: 16)
-            .foregroundStyle(.teal)
-            .frame(width: 340, height: 210)
+            .foregroundStyle(Color.gray.opacity(0.2))
+            .frame(width: 320, height: 210)
     }
 
     private var pagingButtons: some View {
@@ -85,11 +109,12 @@ public struct ScreenshotsSection: View {
     }
 
     private var canScrollForward: Bool {
-        currentIndex < indices.count - 1
+        currentIndex < urls.count - 1
     }
 
     private func scroll(by delta: Int) {
-        let target = (currentIndex + delta).clamped(to: 0...(indices.count - 1))
+        guard !urls.isEmpty else { return }
+        let target = (currentIndex + delta).clamped(to: 0...(urls.count - 1))
         guard target != currentIndex else { return }
         withAnimation(.easeOut(duration: 0.25)) {
             visibleIndex = target
@@ -104,6 +129,13 @@ private extension Int {
 }
 
 #Preview {
-    ScreenshotsSection(urls: [], edgePadding: 32)
-        .padding(32)
+    ScreenshotsSection(
+        urls: [
+            URL(string: "https://picsum.photos/id/10/680/420")!,
+            URL(string: "https://picsum.photos/id/11/680/420")!,
+            URL(string: "https://picsum.photos/id/12/680/420")!
+        ],
+        edgePadding: 32
+    )
+    .padding(32)
 }

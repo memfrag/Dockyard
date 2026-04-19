@@ -14,3 +14,7 @@ public struct GitHubRepo: Codable, Equatable, Hashable, Sendable {
         URL(string: "https://github.com/\(owner)/\(repo)")!
     }
 }
+
+extension Optional<GitHubRepo>: Hashable {
+    
+}

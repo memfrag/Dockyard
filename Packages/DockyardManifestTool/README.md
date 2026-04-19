@@ -30,6 +30,25 @@ Save as `dockyard.config.json` anywhere you like:
 - `iconURL` must already be hosted somewhere — the tool does **not** upload the icon, it just copies the URL into the manifest. Use a versioned path (e.g. `widget-v2.png`) when you change the bitmap; the engine caches icons purely by URL and does not revalidate.
 - `channel` is optional; values are `"Beta"` or `"Release"`. Omit for release apps — the builder defaults to `Release`.
 
+### Per-app editorial assets (`.dockyard/`)
+
+The builder also looks at a `.dockyard/` folder at the root of each app's repo and harvests URLs for the App Details view:
+
+```
+.dockyard/
+  about.md                 → rendered as the "About" section
+  screenshots/
+    01.png                 → rendered as the "Screenshots" section
+    02.png                   (sorted alphabetically; png/jpg/jpeg/gif/webp only)
+    03.png
+```
+
+- All files are optional. If `.dockyard/` doesn't exist, the manifest simply omits those sections — no error.
+- Screenshot files should be **680×420 pixels** (340×210 points @2x) so they render crisp in the App Details view.
+- Only raw URLs (from `raw.githubusercontent.com`) end up in the manifest; the Dockyard app fetches bytes at runtime when the user opens App Details.
+- Release notes for the "What's New" section come from the GitHub release description (`body`). No separate file needed — cutting a new release automatically updates Dockyard next manifest build.
+- Two extra contents-API calls per app are made during manifest build (one for `.dockyard/screenshots` + one for `.dockyard/about.md`). With an authenticated token the rate limit is 5000/hr; unauthenticated is 60/hr and may be exceeded for catalogs with many apps — prefer `set-token`.
+
 ## 2. (Optional) store a GitHub token
 
 Unauthenticated, the GitHub API allows 60 requests per hour per IP. A classic Personal Access Token with no scopes lifts that to 5000/hr for public releases.
