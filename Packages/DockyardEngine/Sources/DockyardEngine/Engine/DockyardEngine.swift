@@ -15,11 +15,18 @@ public final class DockyardEngine {
     public private(set) var lastSuccessfulRefresh: Date?
     public private(set) var catalogIsStale: Bool = false
 
+    public private(set) var editorial: Editorial?
+    public private(set) var lastSuccessfulEditorialRefresh: Date?
+    public private(set) var editorialIsStale: Bool = false
+
     // MARK: - Dependencies
 
     @ObservationIgnored private let manifestURL: URL
+    @ObservationIgnored private let editorialURL: URL
     @ObservationIgnored private let loader: CatalogLoader
     @ObservationIgnored private let cache: CatalogCache
+    @ObservationIgnored private let editorialLoader: EditorialLoader
+    @ObservationIgnored private let editorialCache: EditorialCache
     @ObservationIgnored private let iconCache: IconCache
     @ObservationIgnored private let installer: Installer
     @ObservationIgnored private let mounter: DMGMounting
@@ -42,13 +49,17 @@ public final class DockyardEngine {
 
     public init(
         manifestURL: URL,
+        editorialURL: URL,
         installRoot: URL = InstallDestination.userApplications,
         iconCacheDirectory: URL = IconCache.defaultDirectory,
         urlSession: URLSession = .shared
     ) {
         self.manifestURL = manifestURL
+        self.editorialURL = editorialURL
         self.loader = CatalogLoader(urlSession: urlSession)
         self.cache = CatalogCache()
+        self.editorialLoader = EditorialLoader(urlSession: urlSession)
+        self.editorialCache = EditorialCache()
         self.iconCache = IconCache(directory: iconCacheDirectory, urlSession: urlSession)
         self.installer = Installer(
             downloader: Downloader(urlSession: urlSession),
@@ -61,6 +72,7 @@ public final class DockyardEngine {
         self.installRoot = installRoot
 
         loadCachedCatalog()
+        loadCachedEditorial()
         loadInstallations()
         Task { await self.crashCleanup.run() }
         Logger.engine.info("DockyardEngine initialized (manifestURL: \(manifestURL.absoluteString, privacy: .public), cached catalog: \(self.catalog.count), installations: \(self.installations.count))")
@@ -86,6 +98,24 @@ public final class DockyardEngine {
         } catch {
             catalogIsStale = true
             Logger.catalog.error("refreshCatalog failed: \(String(describing: error), privacy: .public)")
+            throw error
+        }
+    }
+
+    public func refreshEditorial() async throws {
+        Logger.catalog.info("refreshEditorial starting: \(self.editorialURL.absoluteString, privacy: .public)")
+        do {
+            let loaded = try await editorialLoader.load(from: editorialURL)
+            editorial = loaded
+            lastSuccessfulEditorialRefresh = Date()
+            editorialIsStale = false
+            do { try editorialCache.save(loaded) } catch {
+                Logger.catalog.warning("Could not write editorial cache: \(String(describing: error), privacy: .public)")
+            }
+            Logger.catalog.info("refreshEditorial succeeded (generatedAt: \(loaded.generatedAt, privacy: .public))")
+        } catch {
+            editorialIsStale = true
+            Logger.catalog.error("refreshEditorial failed: \(String(describing: error), privacy: .public)")
             throw error
         }
     }
@@ -227,6 +257,14 @@ public final class DockyardEngine {
             catalog = cached.apps
             lastSuccessfulRefresh = cached.generatedAt
             catalogIsStale = true
+        }
+    }
+
+    private func loadCachedEditorial() {
+        if let cached = editorialCache.load() {
+            editorial = cached
+            lastSuccessfulEditorialRefresh = cached.generatedAt
+            editorialIsStale = true
         }
     }
 

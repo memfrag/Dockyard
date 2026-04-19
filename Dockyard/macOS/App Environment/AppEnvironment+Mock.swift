@@ -20,9 +20,10 @@ extension AppEnvironment {
     ///
     internal static func mock() -> AppEnvironment {
         let manifestURL = URL(vouchedFor: "https://example.com/dockyard/manifest.json")
+        let editorialURL = URL(vouchedFor: "https://example.com/dockyard/editorial.json")
         return AppEnvironment(
             appSettings: AppSettings.mock(),
-            dockyardEngine: DockyardEngine(manifestURL: manifestURL),
+            dockyardEngine: DockyardEngine(manifestURL: manifestURL, editorialURL: editorialURL),
             authService: AuthService.mock(),
             engineeringMode: EngineeringMode.shared
         )

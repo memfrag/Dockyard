@@ -2,20 +2,45 @@ import SwiftUI
 
 public struct EditorsPickBanner: View {
 
+    public static let defaultGradient: [Color] = [
+        Color(red: 0.22, green: 0.26, blue: 0.36),
+        Color(red: 0.10, green: 0.12, blue: 0.20)
+    ]
+
     private let category: String
     private let headline: String
     private let description: String
-    private let appIconSystemName: String
-    private let appIconBackground: Color
-    private let appIconForeground: Color
+    private let icon: AppIconSource
     private let appName: String
     private let appAuthor: String
+    private let gradient: [Color]
     private let openAction: () -> Void
 
     private let primaryText: Color = .white
     private let secondaryText: Color = .white.opacity(0.75)
     private let tertiaryText: Color = .white.opacity(0.5)
 
+    public init(
+        category: String = "Editor's Pick",
+        headline: String,
+        description: String,
+        icon: AppIconSource,
+        appName: String,
+        appAuthor: String,
+        gradient: [Color] = EditorsPickBanner.defaultGradient,
+        openAction: @escaping () -> Void
+    ) {
+        self.category = category
+        self.headline = headline
+        self.description = description
+        self.icon = icon
+        self.appName = appName
+        self.appAuthor = appAuthor
+        self.gradient = gradient.isEmpty ? EditorsPickBanner.defaultGradient : gradient
+        self.openAction = openAction
+    }
+
+    /// Convenience initializer for SF-symbol icons with the default gradient.
     public init(
         category: String = "Editor's Pick",
         headline: String,
@@ -27,15 +52,20 @@ public struct EditorsPickBanner: View {
         appAuthor: String,
         openAction: @escaping () -> Void
     ) {
-        self.category = category
-        self.headline = headline
-        self.description = description
-        self.appIconSystemName = appIconSystemName
-        self.appIconBackground = appIconBackground
-        self.appIconForeground = appIconForeground
-        self.appName = appName
-        self.appAuthor = appAuthor
-        self.openAction = openAction
+        self.init(
+            category: category,
+            headline: headline,
+            description: description,
+            icon: .symbol(
+                name: appIconSystemName,
+                background: appIconBackground,
+                foreground: appIconForeground
+            ),
+            appName: appName,
+            appAuthor: appAuthor,
+            gradient: EditorsPickBanner.defaultGradient,
+            openAction: openAction
+        )
     }
 
     public var body: some View {
@@ -64,14 +94,7 @@ public struct EditorsPickBanner: View {
             Spacer().frame(height: 32)
 
             HStack(spacing: 14) {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(appIconBackground)
-                    .frame(width: 64, height: 64)
-                    .overlay {
-                        Image(systemName: appIconSystemName)
-                            .font(.system(size: 30, weight: .regular))
-                            .foregroundStyle(appIconForeground)
-                    }
+                AppIcon(source: icon, size: 64, cornerRadius: 14)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(appName)
@@ -102,10 +125,7 @@ public struct EditorsPickBanner: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [
-                            Color(red: 0.22, green: 0.26, blue: 0.36),
-                            Color(red: 0.10, green: 0.12, blue: 0.20)
-                        ],
+                        colors: gradient,
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )

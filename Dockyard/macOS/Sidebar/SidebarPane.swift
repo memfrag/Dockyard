@@ -19,6 +19,10 @@ enum SidebarPane {
     case entertainment
     case finance
     case productivity
+
+    // MARK: Authoring Section (hidden unless Editorial Mode is enabled)
+
+    case editorial
 }
 
 // MARK: - Protocol Conformances

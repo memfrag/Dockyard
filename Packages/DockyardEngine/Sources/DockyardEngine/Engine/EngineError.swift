@@ -5,6 +5,9 @@ public enum EngineError: Error, Sendable, Equatable {
     case manifestUnreachable(underlying: String)
     case manifestDecodeFailed(underlying: String)
     case unsupportedSchemaVersion(found: Int, expected: Int)
+    case editorialUnreachable(underlying: String)
+    case editorialDecodeFailed(underlying: String)
+    case unsupportedEditorialSchemaVersion(found: Int, expected: Int)
     case downloadFailed(underlying: String)
     case hashMismatch(expected: String, actual: String)
     case mountFailed(stderr: String)
@@ -32,6 +35,12 @@ extension EngineError: LocalizedError {
             return "Manifest decode failed: \(underlying)"
         case .unsupportedSchemaVersion(let found, let expected):
             return "Unsupported manifest schema version \(found); expected \(expected)"
+        case .editorialUnreachable(let underlying):
+            return "Editorial unreachable: \(underlying)"
+        case .editorialDecodeFailed(let underlying):
+            return "Editorial decode failed: \(underlying)"
+        case .unsupportedEditorialSchemaVersion(let found, let expected):
+            return "Unsupported editorial schema version \(found); expected \(expected)"
         case .downloadFailed(let underlying):
             return "Download failed: \(underlying)"
         case .hashMismatch(let expected, let actual):

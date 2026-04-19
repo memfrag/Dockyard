@@ -9,6 +9,7 @@ import DockyardEngine
 struct Sidebar: View {
 
     @Environment(DockyardEngine.self) private var engine
+    @Environment(AppSettings.self) private var appSettings
 
     @State var searchText: String = ""
 
@@ -66,6 +67,14 @@ struct Sidebar: View {
                     }
                 }
 
+                if appSettings.isEditorialModeEnabled {
+                    Section(header: Text("Authoring")) {
+                        NavigationLink(value: SidebarPane.editorial) {
+                            Label("Editorial", systemImage: "richtext.page")
+                        }
+                    }
+                }
+
             }
             .listStyle(SidebarListStyle())
             .clipped()
@@ -92,8 +101,15 @@ struct Sidebar: View {
                 FinancePane()
             case .productivity:
                 ProductivityPane()
+            case .editorial:
+                EditorialPane()
             default:
                 EmptyPane()
+            }
+        }
+        .onChange(of: appSettings.isEditorialModeEnabled) { _, isEnabled in
+            if !isEnabled, selection == .editorial {
+                selection = .today
             }
         }
         .toolbar {

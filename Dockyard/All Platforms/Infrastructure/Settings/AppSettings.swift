@@ -22,7 +22,10 @@ import KeyValueStore
     public enum Key: String {
         /// The preferred color scheme for the app.
         case colorScheme
-        
+
+        /// Whether Editorial Mode is enabled (reveals the authoring pane in the sidebar).
+        case isEditorialModeEnabled
+
         // <-- (1 / 3) Add key for new property here
     }
 
@@ -34,7 +37,14 @@ import KeyValueStore
             store.save(colorScheme, for: .colorScheme)
         }
     }
-    
+
+    /// When `true`, the sidebar reveals an Editorial authoring pane for composing `editorial.json`.
+    public var isEditorialModeEnabled: Bool {
+        didSet {
+            store.save(isEditorialModeEnabled, for: .isEditorialModeEnabled)
+        }
+    }
+
     // <-- (2 / 3) Add property for new property here
 
     // MARK: Setup
@@ -51,7 +61,8 @@ import KeyValueStore
     public init(store: AnyKeyValueStore<AppSettings.Key>? = nil) {
         self.store = store ?? .defaultStore
         colorScheme = self.store.load(.colorScheme, default: .system)
-        
+        isEditorialModeEnabled = self.store.load(.isEditorialModeEnabled, default: false)
+
         // <-- (3 / 3) Add initializer for new property here.
     }
 }

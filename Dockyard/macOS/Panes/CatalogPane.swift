@@ -2,7 +2,6 @@
 //  Copyright © 2026 Apparata AB. All rights reserved.
 //
 
-import AppKit
 import SwiftUI
 import SwiftUIToolbox
 import AppDesign
@@ -67,66 +66,7 @@ struct CatalogPane: View {
 
     private var cardItems: [AppCardItem] {
         entries.map { entry in
-            AppCardItem(
-                id: entry.id,
-                icon: iconSource(for: entry),
-                category: entry.category,
-                title: entry.displayName,
-                description: entry.summary,
-                actionTitle: actionTitle(for: entry),
-                actionEnabled: actionEnabled(for: entry),
-                progress: (engine.phases[entry.id] ?? .idle).downloadFraction,
-                action: { performAction(for: entry) }
-            )
-        }
-    }
-
-    private func iconSource(for entry: CatalogEntry) -> AppIconSource {
-        if let url = iconURLs[entry.id] {
-            return .file(url)
-        }
-        return .symbol(name: "app.dashed", background: Color.gray.opacity(0.25), foreground: .secondary)
-    }
-
-    // MARK: - Action state
-
-    private func installedApp(for entry: CatalogEntry) -> InstalledApp? {
-        engine.installations.first(where: { $0.id == entry.id })
-    }
-
-    private func actionTitle(for entry: CatalogEntry) -> String {
-        if installedApp(for: entry) != nil {
-            return "Open"
-        }
-        switch engine.phases[entry.id] ?? .idle {
-        case .queued:
-            return "Queued"
-        case .downloadingDMG(let progress):
-            if let f = progress.fraction {
-                return "\(Int(f * 100))%"
-            }
-            return "…"
-        case .verifyingHash, .mounting, .copying, .verifyingSignature, .finalizing:
-            return "Installing…"
-        case .cancelled, .failed:
-            return "Retry"
-        case .idle, .installed:
-            return installedApp(for: entry) != nil ? "Open" : "Install"
-        }
-    }
-
-    private func actionEnabled(for entry: CatalogEntry) -> Bool {
-        if installedApp(for: entry) != nil { return true }
-        return !(engine.phases[entry.id]?.isInFlight ?? false)
-    }
-
-    private func performAction(for entry: CatalogEntry) {
-        if let installed = installedApp(for: entry) {
-            NSWorkspace.shared.open(installed.bundlePath)
-            return
-        }
-        Task {
-            _ = try? await engine.install(entry.id)
+            AppCardFactory.makeItem(for: entry, engine: engine, iconURL: iconURLs[entry.id])
         }
     }
 

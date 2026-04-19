@@ -17,6 +17,9 @@ extension AppEnvironment {
     ///
     private static let manifestURL = URL(vouchedFor: "https://raw.githubusercontent.com/memfrag/DockyardManifest/main/manifest.json")
 
+    /// The production editorial content URL, published alongside the manifest.
+    private static let editorialURL = URL(vouchedFor: "https://raw.githubusercontent.com/memfrag/DockyardManifest/main/editorial.json")
+
     /// Builds a live environment configured for production behavior.
     ///
     /// Intended only for ``#Preview`` usage and tests where an explicit instance is required.
@@ -27,7 +30,7 @@ extension AppEnvironment {
     internal static func live() -> AppEnvironment {
         AppEnvironment(
             appSettings: AppSettings(),
-            dockyardEngine: DockyardEngine(manifestURL: manifestURL),
+            dockyardEngine: DockyardEngine(manifestURL: manifestURL, editorialURL: editorialURL),
             authService: AuthService.mock(),
             engineeringMode: EngineeringMode.shared
         )

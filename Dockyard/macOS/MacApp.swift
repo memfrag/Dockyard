@@ -16,7 +16,13 @@ struct MacApp: App {
     init() {
         AppDesign.apply()
         Task { @MainActor in
-            try? await AppEnvironment.default.dockyardEngine.refreshCatalog()
+            async let catalog: Void = {
+                try? await AppEnvironment.default.dockyardEngine.refreshCatalog()
+            }()
+            async let editorial: Void = {
+                try? await AppEnvironment.default.dockyardEngine.refreshEditorial()
+            }()
+            _ = await (catalog, editorial)
         }
     }
     
