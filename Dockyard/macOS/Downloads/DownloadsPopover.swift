@@ -168,7 +168,9 @@ private struct DownloadRow: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DownloadsPopover()
         .previewEnvironment()
 }
+#endif

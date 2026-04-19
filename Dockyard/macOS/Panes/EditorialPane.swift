@@ -509,7 +509,9 @@ final class SectionDraft: Identifiable {
     }
 }
 
+#if DEBUG
 #Preview {
     EditorialPane()
         .previewEnvironment()
 }
+#endif

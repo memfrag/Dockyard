@@ -18,7 +18,9 @@ struct FinancePane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     FinancePane()
         .previewEnvironment()
 }
+#endif

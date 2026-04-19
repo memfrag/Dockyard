@@ -130,7 +130,9 @@ struct InstalledPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     InstalledPane()
         .previewEnvironment()
 }
+#endif

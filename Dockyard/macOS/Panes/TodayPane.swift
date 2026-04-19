@@ -171,7 +171,9 @@ struct TodayPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     TodayPane()
         .previewEnvironment()
 }
+#endif

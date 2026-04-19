@@ -33,7 +33,9 @@ struct DiscoverPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DiscoverPane()
         .previewEnvironment()
 }
+#endif

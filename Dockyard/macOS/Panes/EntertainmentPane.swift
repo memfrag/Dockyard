@@ -18,7 +18,9 @@ struct EntertainmentPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     EntertainmentPane()
         .previewEnvironment()
 }
+#endif

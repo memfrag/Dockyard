@@ -22,7 +22,9 @@ struct EditorialSettingsTab: View {
     }
 }
 
+#if DEBUG
 #Preview {
     EditorialSettingsTab()
         .previewEnvironment()
 }
+#endif

@@ -191,6 +191,7 @@ struct AppDetailsView: View {
 
 // MARK: - Preview
 
+#if DEBUG
 #Preview("Dark Mode") {
     AppDetailsView(.Mock.repoRanger)
         .previewEnvironment()
@@ -201,3 +202,4 @@ struct AppDetailsView: View {
         .colorScheme(.light)
         .previewEnvironment()
 }
+#endif

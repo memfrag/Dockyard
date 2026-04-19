@@ -18,7 +18,9 @@ struct ProductivityPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ProductivityPane()
         .previewEnvironment()
 }
+#endif

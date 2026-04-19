@@ -18,7 +18,9 @@ struct DesignPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DesignPane()
         .previewEnvironment()
 }
+#endif

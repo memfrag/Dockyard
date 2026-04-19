@@ -18,7 +18,9 @@ struct DevelopmentPane: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DevelopmentPane()
         .previewEnvironment()
 }
+#endif
