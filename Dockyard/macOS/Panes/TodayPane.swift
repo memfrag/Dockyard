@@ -94,7 +94,10 @@ struct TodayPane: View {
                     appName: heroEntry.displayName,
                     appAuthor: "Version \(heroEntry.version)",
                     gradient: gradient(from: pick.gradient),
-                    openAction: { AppCardFactory.performAction(for: heroEntry, engine: engine) }
+                    actionTitle: AppCardFactory.actionTitle(for: heroEntry, engine: engine),
+                    actionEnabled: AppCardFactory.actionEnabled(for: heroEntry, engine: engine),
+                    progress: (engine.phases[heroEntry.id] ?? .idle).downloadFraction,
+                    action: { AppCardFactory.performAction(for: heroEntry, engine: engine) }
                 )
             }
 

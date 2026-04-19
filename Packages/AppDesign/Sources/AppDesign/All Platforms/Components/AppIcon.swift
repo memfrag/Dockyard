@@ -2,6 +2,8 @@ import SwiftUI
 
 public struct AppIcon: View {
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private let source: AppIconSource
     private let size: CGFloat
     private let cornerRadius: CGFloat
@@ -13,6 +15,12 @@ public struct AppIcon: View {
     }
 
     public var body: some View {
+        iconBody
+            .overlay(lightModeBorder)
+    }
+
+    @ViewBuilder
+    private var iconBody: some View {
         switch source {
         case .symbol(let name, let background, let foreground):
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -25,6 +33,15 @@ public struct AppIcon: View {
                 }
         case .file(let url):
             fileIcon(url)
+        }
+    }
+
+    @ViewBuilder
+    private var lightModeBorder: some View {
+        if colorScheme == .light {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+                .frame(width: size, height: size)
         }
     }
 

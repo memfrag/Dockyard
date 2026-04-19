@@ -14,7 +14,10 @@ public struct EditorsPickBanner: View {
     private let appName: String
     private let appAuthor: String
     private let gradient: [Color]
-    private let openAction: () -> Void
+    private let actionTitle: String
+    private let actionEnabled: Bool
+    private let progress: Double?
+    private let action: () -> Void
 
     private let primaryText: Color = .white
     private let secondaryText: Color = .white.opacity(0.75)
@@ -28,7 +31,10 @@ public struct EditorsPickBanner: View {
         appName: String,
         appAuthor: String,
         gradient: [Color] = EditorsPickBanner.defaultGradient,
-        openAction: @escaping () -> Void
+        actionTitle: String = "Open",
+        actionEnabled: Bool = true,
+        progress: Double? = nil,
+        action: @escaping () -> Void
     ) {
         self.category = category
         self.headline = headline
@@ -37,7 +43,10 @@ public struct EditorsPickBanner: View {
         self.appName = appName
         self.appAuthor = appAuthor
         self.gradient = gradient.isEmpty ? EditorsPickBanner.defaultGradient : gradient
-        self.openAction = openAction
+        self.actionTitle = actionTitle
+        self.actionEnabled = actionEnabled
+        self.progress = progress
+        self.action = action
     }
 
     /// Convenience initializer for SF-symbol icons with the default gradient.
@@ -50,7 +59,10 @@ public struct EditorsPickBanner: View {
         appIconForeground: Color = Color(white: 0.3),
         appName: String,
         appAuthor: String,
-        openAction: @escaping () -> Void
+        actionTitle: String = "Open",
+        actionEnabled: Bool = true,
+        progress: Double? = nil,
+        action: @escaping () -> Void
     ) {
         self.init(
             category: category,
@@ -64,7 +76,10 @@ public struct EditorsPickBanner: View {
             appName: appName,
             appAuthor: appAuthor,
             gradient: EditorsPickBanner.defaultGradient,
-            openAction: openAction
+            actionTitle: actionTitle,
+            actionEnabled: actionEnabled,
+            progress: progress,
+            action: action
         )
     }
 
@@ -107,15 +122,23 @@ public struct EditorsPickBanner: View {
 
                 Spacer(minLength: 12)
 
-                Button(action: openAction) {
-                    Text("Open")
+                Button(action: action) {
+                    Text(actionTitle)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(actionEnabled ? .black : Color.black.opacity(0.5))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.8), in: Capsule())
+                        .background(Color.white.opacity(actionEnabled ? 0.85 : 0.55), in: Capsule())
                 }
                 .buttonStyle(.plain)
+                .disabled(!actionEnabled)
+            }
+
+            if let progress {
+                Spacer().frame(height: 10)
+                ProgressView(value: progress.clamped(to: 0...1))
+                    .progressViewStyle(.linear)
+                    .tint(.white)
             }
         }
         .padding(28)
@@ -134,15 +157,36 @@ public struct EditorsPickBanner: View {
     }
 }
 
+private extension Double {
+    func clamped(to range: ClosedRange<Double>) -> Double {
+        min(max(self, range.lowerBound), range.upperBound)
+    }
+}
+
 #Preview {
-    EditorsPickBanner(
-        headline: "Docs 4.1 makes the wiki disappear.",
-        description: "Offline-first, keyboard-native, and now meaningfully faster on large spaces. The full company knowledge base in a Mac app that gets out of your way.",
-        appIconSystemName: "doc.text.fill",
-        appName: "Docs",
-        appAuthor: "by Platform",
-        openAction: {}
-    )
+    VStack(spacing: 16) {
+        EditorsPickBanner(
+            headline: "Docs 4.1 makes the wiki disappear.",
+            description: "Offline-first, keyboard-native, and now meaningfully faster on large spaces.",
+            appIconSystemName: "doc.text.fill",
+            appName: "Docs",
+            appAuthor: "by Platform",
+            action: {}
+        )
+        EditorsPickBanner(
+            headline: "Deploy is downloading.",
+            description: "Progress and a disabled button mirror the grid card behavior.",
+            appIconSystemName: "airplane",
+            appIconBackground: .black,
+            appIconForeground: .white,
+            appName: "Deploy",
+            appAuthor: "by Platform",
+            actionTitle: "42%",
+            actionEnabled: false,
+            progress: 0.42,
+            action: {}
+        )
+    }
     .padding()
     .frame(width: 600)
 }
