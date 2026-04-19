@@ -14,6 +14,7 @@ struct AppDetailsView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var iconURL: URL?
+    @State private var cachedScreenshotURLs: [URL] = []
     @State private var aboutDocument: MarkdownDocument?
     @State private var releaseNotesDocument: MarkdownDocument?
 
@@ -73,7 +74,10 @@ struct AppDetailsView: View {
                     if !entry.screenshotURLs.isEmpty {
                         Divider()
                             .opacity(0.5)
-                        ScreenshotsSection(urls: entry.screenshotURLs, edgePadding: 32)
+                        ScreenshotsSection(
+                            urls: cachedScreenshotURLs.isEmpty ? entry.screenshotURLs : cachedScreenshotURLs,
+                            edgePadding: 32
+                        )
                     }
 
                     if let releaseNotesDocument {
@@ -102,6 +106,9 @@ struct AppDetailsView: View {
         }
         .task(id: entry.id) {
             iconURL = try? await engine.iconFile(for: entry.id)
+        }
+        .task(id: entry.screenshotURLs) {
+            await loadScreenshots()
         }
         .task(id: entry.aboutURL) {
             await loadAbout()
@@ -163,18 +170,42 @@ struct AppDetailsView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Markdown loading
+    // MARK: - Asset loading
+
+    private func loadScreenshots() async {
+        let remotes = entry.screenshotURLs
+        guard !remotes.isEmpty else {
+            cachedScreenshotURLs = []
+            return
+        }
+        var resolved: [URL] = []
+        resolved.reserveCapacity(remotes.count)
+        for remote in remotes {
+            if let local = try? await engine.screenshotFile(for: remote) {
+                resolved.append(local)
+            } else {
+                resolved.append(remote) // fall back to remote URL on cache failure
+            }
+        }
+        cachedScreenshotURLs = resolved
+    }
 
     private func loadAbout() async {
         guard let url = entry.aboutURL else {
             aboutDocument = nil
             return
         }
-        guard
-            let (data, _) = try? await URLSession.shared.data(from: url),
-            let text = String(data: data, encoding: .utf8),
-            !text.isEmpty
-        else {
+        // Prefer the cached copy; fall back to direct fetch if the cache fails.
+        var text: String?
+        if let local = try? await engine.aboutFile(for: url),
+           let data = try? Data(contentsOf: local),
+           let decoded = String(data: data, encoding: .utf8) {
+            text = decoded
+        } else if let (data, _) = try? await URLSession.shared.data(from: url),
+                  let decoded = String(data: data, encoding: .utf8) {
+            text = decoded
+        }
+        guard let text, !text.isEmpty else {
             aboutDocument = nil
             return
         }

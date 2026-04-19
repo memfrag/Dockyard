@@ -28,6 +28,8 @@ public final class DockyardEngine {
     @ObservationIgnored private let editorialLoader: EditorialLoader
     @ObservationIgnored private let editorialCache: EditorialCache
     @ObservationIgnored private let iconCache: IconCache
+    @ObservationIgnored private let screenshotCache: ScreenshotCache
+    @ObservationIgnored private let aboutCache: AboutCache
     @ObservationIgnored private let installer: Installer
     @ObservationIgnored private let mounter: DMGMounting
     @ObservationIgnored private let crashCleanup: CrashCleanup
@@ -52,6 +54,8 @@ public final class DockyardEngine {
         editorialURL: URL,
         installRoot: URL = InstallDestination.userApplications,
         iconCacheDirectory: URL = IconCache.defaultDirectory,
+        screenshotCacheDirectory: URL = ScreenshotCache.defaultDirectory,
+        aboutCacheDirectory: URL = AboutCache.defaultDirectory,
         urlSession: URLSession = .shared
     ) {
         self.manifestURL = manifestURL
@@ -61,6 +65,8 @@ public final class DockyardEngine {
         self.editorialLoader = EditorialLoader(urlSession: urlSession)
         self.editorialCache = EditorialCache()
         self.iconCache = IconCache(directory: iconCacheDirectory, urlSession: urlSession)
+        self.screenshotCache = ScreenshotCache(directory: screenshotCacheDirectory, urlSession: urlSession)
+        self.aboutCache = AboutCache(directory: aboutCacheDirectory, urlSession: urlSession)
         self.installer = Installer(
             downloader: Downloader(urlSession: urlSession),
             installRoot: installRoot
@@ -125,6 +131,20 @@ public final class DockyardEngine {
             throw EngineError.notInstalled(id: appID)
         }
         return try await iconCache.localFile(for: entry.iconURL)
+    }
+
+    /// Returns the local file URL for a screenshot, downloading and caching it
+    /// on first request. Subsequent requests for the same URL return the cached
+    /// file without hitting the network.
+    public func screenshotFile(for url: URL) async throws -> URL {
+        try await screenshotCache.localFile(for: url)
+    }
+
+    /// Returns the local file URL for an About markdown file, downloading and
+    /// caching it on first request. Subsequent requests for the same URL return
+    /// the cached file without hitting the network.
+    public func aboutFile(for url: URL) async throws -> URL {
+        try await aboutCache.localFile(for: url)
     }
 
     public func install(_ appID: CatalogEntry.ID) async throws -> InstalledApp {

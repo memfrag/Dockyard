@@ -37,9 +37,22 @@
 		7BFBFD1AC261D8B21107202D /* Dockyard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dockyard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4132BDE62F958E7400D1E3CA /* Exceptions for "Dockyard" folder in "Dockyard" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				macOS/Info.plist,
+			);
+			target = 38B859A798C9EC891106C466 /* Dockyard */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9B54BAF622B7D6EC67409981 /* Dockyard */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4132BDE62F958E7400D1E3CA /* Exceptions for "Dockyard" folder in "Dockyard" target */,
+			);
 			path = Dockyard;
 			sourceTree = "<group>";
 		};
