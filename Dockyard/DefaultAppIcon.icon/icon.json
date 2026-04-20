@@ -1,26 +1,44 @@
 {
-  "fill" : {
-    "automatic-gradient" : "extended-gray:1.00000,1.00000"
-  },
+  "fill-specializations" : [
+    {
+      "value" : {
+        "solid" : "extended-gray:1.00000,1.00000"
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.40093,0.34063,0.14984,1.00000",
+          "display-p3:0.61369,0.55000,0.34848,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    }
+  ],
   "groups" : [
     {
       "layers" : [
         {
           "glass" : false,
-          "image-name" : "DockyardAppIcon2.png",
-          "name" : "DockyardAppIcon2",
+          "image-name" : "Image.png",
+          "name" : "Image",
           "position" : {
-            "scale" : 0.94,
+            "scale" : 1.1,
             "translation-in-points" : [
-              0,
-              0
+              2.75,
+              20.9296875
             ]
           }
-        },
-        {
-          "hidden" : true,
-          "image-name" : "DockyardAppIcon.png",
-          "name" : "DockyardAppIcon"
         }
       ],
       "shadow" : {
