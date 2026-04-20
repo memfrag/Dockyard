@@ -24,17 +24,12 @@ struct MainWindow: Scene {
         .commands {
             AboutCommand()
             CheckForUpdatesCommand(updater: updater)
+            // Replaces the default "New Window" with Refresh Catalog, keeping
+            // the File menu populated.
             RefreshCatalogCommand()
             SidebarCommands()
-            ExportCommands()
             AlwaysOnTopCommand()
             HelpCommands()
-
-            /// Add a menu with custom commands
-            MyCommands()
-
-            // Remove the "New Window" option from the File menu.
-            CommandGroup(replacing: .newItem, addition: { })
         }
 
     }

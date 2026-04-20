@@ -11,7 +11,7 @@ struct RefreshCatalogCommand: Commands {
     private static let menuRefreshCooldown: TimeInterval = 60
 
     var body: some Commands {
-        CommandGroup(after: .sidebar) {
+        CommandGroup(replacing: .newItem) {
             Button("Refresh Catalog") {
                 Task { @MainActor in
                     await AppEnvironment.default.dockyardEngine
