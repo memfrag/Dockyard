@@ -84,6 +84,31 @@ struct GitHubAPIClient {
         }
     }
 
+    /// Fetches the public profile for a GitHub account. Works for both users and
+    /// organizations (GitHub's `/users/{login}` endpoint returns org data too).
+    /// Returns `nil` when the account can't be found (HTTP 404).
+    func ownerProfile(login: String) async throws -> GitHubOwnerProfile? {
+        guard let url = URL(string: "https://api.github.com/users/\(login)") else { return nil }
+        let (data, http) = try await send(request: authedRequest(for: url))
+
+        switch http.statusCode {
+        case 200:
+            do {
+                return try JSONDecoder().decode(GitHubOwnerProfile.self, from: data)
+            } catch {
+                throw GitHubAPIError.transport(underlying: "Decode failed: \(error)")
+            }
+        case 404:
+            return nil
+        case 401:
+            throw GitHubAPIError.unauthorized
+        case 403:
+            throw rateLimitErrorOrFallback(http: http, data: data)
+        default:
+            throw GitHubAPIError.unexpectedStatus(http.statusCode, body: String(decoding: data, as: UTF8.self))
+        }
+    }
+
     /// Fetches metadata for a single file within a repo. Returns `nil` when the file
     /// is absent (HTTP 404) — callers treat missing `.dockyard/about.md` as "no about page".
     func getFile(owner: String, repo: String, path: String) async throws -> GitHubContentsEntry? {

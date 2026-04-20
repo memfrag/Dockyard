@@ -67,8 +67,12 @@ struct AppDetailsView: View {
                     HStack(alignment: .top, spacing: 24) {
                         AppDetailProperty("Version", value: entry.version)
                         AppDetailProperty("Size", value: entry.dmgSize.formatted(.byteCount(style: .binary)))
-                        AppDetailProperty("Requires", value: "macOS 26")
-                        AppDetailProperty("Developer", value: "Martin Johannesson")
+                        if let requiredVersion = entry.requiredVersion {
+                            AppDetailProperty("Requires", value: "macOS \(requiredVersion)")
+                        }
+                        if let developer = entry.developer {
+                            AppDetailProperty("Developer", value: developer)
+                        }
                     }
 
                     if !entry.screenshotURLs.isEmpty {

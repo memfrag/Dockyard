@@ -69,6 +69,32 @@ struct CatalogLoaderTests {
         #expect(entry.releaseNotes == "## 1.0.0\n- Initial release")
     }
 
+    @Test func decodesDeveloperAndRequiredVersion() throws {
+        let json = """
+        {
+          "schemaVersion": 1,
+          "generatedAt": "2026-04-18T15:30:00Z",
+          "apps": [
+            {
+              "id": "com.apparata.widget",
+              "displayName": "Widget",
+              "category": "Productivity",
+              "summary": "A widget.",
+              "iconURL": "https://example.com/widget.png",
+              "version": "1.0.0",
+              "dmgURL": "https://example.com/Widget-1.0.0.dmg",
+              "dmgSize": 123456,
+              "developer": "Apparata AB",
+              "requiredVersion": "26.0"
+            }
+          ]
+        }
+        """
+        let manifest = try CatalogLoader.decode(Data(json.utf8))
+        #expect(manifest.apps[0].developer == "Apparata AB")
+        #expect(manifest.apps[0].requiredVersion == "26.0")
+    }
+
     @Test func decodesChannel() throws {
         let json = """
         {
