@@ -1,10 +1,11 @@
 /* ============================================================
    Dockyard for web — styles mirror the Mac AppDesign components.
-   Light + dark via prefers-color-scheme.
+   Light/dark selected via the `.dark` class on <html>, applied by
+   theme.js based on the stored preference or the system default.
    ============================================================ */
 
 :root {
-    color-scheme: light dark;
+    color-scheme: light;
 
     /* Light-mode tokens (default) */
     --bg:                #f2f1f4;
@@ -32,25 +33,27 @@
     --sidebar-width:     240px;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg:                #1c1c1e;
-        --sidebar-bg:        #232326;
-        --pane-bg:           #1c1c1e;
-        --card-bg:           rgba(255, 255, 255, 0.05);
-        --card-border:       rgba(255, 255, 255, 0.10);
-        --icon-border:       rgba(0, 0, 0, 0); /* no extra border in dark mode */
-        --text-primary:      #ffffff;
-        --text-secondary:    rgba(255, 255, 255, 0.70);
-        --text-tertiary:     rgba(255, 255, 255, 0.45);
-        --button-bg:         rgba(255, 255, 255, 0.15);
-        --button-bg-hover:   rgba(255, 255, 255, 0.22);
-        --divider:           rgba(255, 255, 255, 0.10);
-        --badge-bg:          rgba(255, 255, 255, 0.18);
-        --channel-bg:        rgba(245, 158, 11, 0.28);
-        --channel-fg:        #fbbf24;
-        --placeholder:       rgba(255, 255, 255, 0.10);
-    }
+/* Dark-mode tokens. Applied whenever the `.dark` class is present on <html> —
+   the preamble in theme.js sets it based on stored preference or system pref
+   when the user hasn't chosen explicitly. */
+:root.dark {
+    color-scheme: dark;
+    --bg:                #1c1c1e;
+    --sidebar-bg:        #232326;
+    --pane-bg:           #1c1c1e;
+    --card-bg:           rgba(255, 255, 255, 0.05);
+    --card-border:       rgba(255, 255, 255, 0.10);
+    --icon-border:       rgba(0, 0, 0, 0); /* no extra border in dark mode */
+    --text-primary:      #ffffff;
+    --text-secondary:    rgba(255, 255, 255, 0.70);
+    --text-tertiary:     rgba(255, 255, 255, 0.45);
+    --button-bg:         rgba(255, 255, 255, 0.15);
+    --button-bg-hover:   rgba(255, 255, 255, 0.22);
+    --divider:           rgba(255, 255, 255, 0.10);
+    --badge-bg:          rgba(255, 255, 255, 0.18);
+    --channel-bg:        rgba(245, 158, 11, 0.28);
+    --channel-fg:        #fbbf24;
+    --placeholder:       rgba(255, 255, 255, 0.10);
 }
 
 * {
@@ -99,10 +102,14 @@ a {
 
 .sidebar-search {
     margin: 8px 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 #search {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     padding: 6px 10px;
     font-size: 13px;
     border: 1px solid var(--card-border);
@@ -115,6 +122,36 @@ a {
 
 #search:focus {
     border-color: var(--accent);
+}
+
+.theme-toggle-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 7px;
+    border: 1px solid var(--card-border);
+    background: var(--pane-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--button-bg);
+    color: var(--text-primary);
+}
+
+.theme-toggle-icon {
+    display: inline-flex;
+}
+
+.theme-toggle-icon svg {
+    width: 15px;
+    height: 15px;
 }
 
 .sidebar-nav {
@@ -178,9 +215,40 @@ a {
 
 .sidebar-footer {
     margin-top: auto;
-    padding: 16px 8px 4px;
-    font-size: 11px;
-    color: var(--text-tertiary);
+    padding: 16px 6px 6px;
+}
+
+.sidebar-download-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background: var(--button-bg);
+    color: var(--text-primary);
+    font-size: 12.5px;
+    font-weight: 500;
+    transition: background 0.15s;
+    cursor: pointer;
+}
+
+.sidebar-download-btn:hover {
+    background: var(--button-bg-hover);
+}
+
+.sidebar-download-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.sidebar-download-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* ------------------------------------------------------------
@@ -276,10 +344,8 @@ a {
     font-size: 13px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .error-banner {
-        color: #fca5a5;
-    }
+.dark .error-banner {
+    color: #fca5a5;
 }
 
 /* ------------------------------------------------------------
@@ -305,10 +371,8 @@ a {
     text-align: left;
 }
 
-@media (prefers-color-scheme: dark) {
-    .app-card {
-        border-color: transparent;
-    }
+.dark .app-card {
+    border-color: transparent;
 }
 
 .app-card:hover {
@@ -534,10 +598,8 @@ a {
     cursor: pointer;
 }
 
-@media (prefers-color-scheme: dark) {
-    .highlight-card {
-        border-color: transparent;
-    }
+.dark .highlight-card {
+    border-color: transparent;
 }
 
 .highlight-card .app-icon {

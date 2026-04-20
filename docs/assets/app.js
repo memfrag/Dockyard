@@ -27,14 +27,81 @@ const ICONS = {
     development:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7l6 5-6 5M10 7L4 12l6 5"/></svg>`,
     entertainment: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>`,
     finance:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`,
-    productivity:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l7-14 7 14M5 15h14"/></svg>`
+    productivity:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l7-14 7 14M5 15h14"/></svg>`,
+    download:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>`,
+    "appearance-system": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg>`,
+    "appearance-light":  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`,
+    "appearance-dark":   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 13.8A7 7 0 0 1 10.2 6.2 7 7 0 1 0 17.8 13.8z"/></svg>`
 };
 
 function paintSidebarIcons() {
-    document.querySelectorAll("[data-symbol]").forEach(el => {
-        const key = el.dataset.symbol;
-        const svg = ICONS[key];
-        if (svg) el.innerHTML = svg; // trusted: from our own constant
+    document.querySelectorAll("[data-symbol]").forEach(paintSymbol);
+}
+
+function paintSymbol(element) {
+    const key = element.dataset.symbol;
+    const svg = ICONS[key];
+    if (svg) element.innerHTML = svg; // trusted: from our own constant
+}
+
+// ------------------------------------------------------------
+// Appearance (light / dark / system)
+// ------------------------------------------------------------
+
+const THEME_ORDER = ["system", "light", "dark"];
+const THEME_STORAGE_KEY = "dockyard.theme";
+const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+function getThemePref() {
+    try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored === "light" || stored === "dark") return stored;
+    } catch {}
+    return "system";
+}
+
+function setThemePref(pref) {
+    try {
+        if (pref === "system") {
+            localStorage.removeItem(THEME_STORAGE_KEY);
+        } else {
+            localStorage.setItem(THEME_STORAGE_KEY, pref);
+        }
+    } catch {}
+    applyTheme(pref);
+    updateThemeButton(pref);
+}
+
+function applyTheme(pref) {
+    const dark = pref === "dark" || (pref === "system" && darkQuery.matches);
+    document.documentElement.classList.toggle("dark", dark);
+}
+
+function updateThemeButton(pref) {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    const icon = btn.querySelector(".theme-toggle-icon");
+    icon.dataset.symbol = `appearance-${pref}`;
+    paintSymbol(icon);
+    const label = pref.charAt(0).toUpperCase() + pref.slice(1);
+    btn.title = `Appearance: ${label} (click to cycle)`;
+    btn.setAttribute("aria-label", `Appearance: ${label}. Click to cycle.`);
+}
+
+function cycleTheme() {
+    const current = getThemePref();
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(current) + 1) % THEME_ORDER.length];
+    setThemePref(next);
+}
+
+function bindThemeToggle() {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", cycleTheme);
+    updateThemeButton(getThemePref());
+    // React to OS-level changes when pref is "system".
+    darkQuery.addEventListener("change", () => {
+        if (getThemePref() === "system") applyTheme("system");
     });
 }
 
@@ -56,6 +123,7 @@ async function loadJSON(url, cacheKey) {
 
 async function bootstrap() {
     paintSidebarIcons();
+    bindThemeToggle();
     bindSearchField();
 
     try {
