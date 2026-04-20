@@ -22,15 +22,9 @@ struct MacApp: App {
 
     init() {
         AppDesign.apply()
-        Task { @MainActor in
-            async let catalog: Void = {
-                try? await AppEnvironment.default.dockyardEngine.refreshCatalog()
-            }()
-            async let editorial: Void = {
-                try? await AppEnvironment.default.dockyardEngine.refreshEditorial()
-            }()
-            _ = await (catalog, editorial)
-        }
+        // The initial refresh fires via MacAppDelegate.applicationDidBecomeActive,
+        // which runs right after launch once the app becomes frontmost. It also
+        // handles subsequent focus-triggered refreshes (with a 15-minute cooldown).
     }
 
     var body: some Scene {

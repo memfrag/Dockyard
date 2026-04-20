@@ -47,6 +47,10 @@ public final class DockyardEngine {
 
     @ObservationIgnored private var needsDiskRebuild: Bool = false
 
+    // MARK: - Staleness throttle
+
+    @ObservationIgnored private var lastRefreshAttempt: Date?
+
     // MARK: - Init
 
     public init(
@@ -90,16 +94,22 @@ public final class DockyardEngine {
         Logger.catalog.info("refreshCatalog starting: \(self.manifestURL.absoluteString, privacy: .public)")
         do {
             let manifest = try await loader.load(from: manifestURL)
-            catalog = manifest.apps
-            lastSuccessfulRefresh = Date()
-            catalogIsStale = false
-            do { try cache.save(manifest) } catch {
-                Logger.catalog.warning("Could not write catalog cache: \(String(describing: error), privacy: .public)")
+            if catalogIsStale {
+                catalogIsStale = false
             }
-            Logger.catalog.info("refreshCatalog succeeded: \(manifest.apps.count) apps (generatedAt: \(manifest.generatedAt, privacy: .public))")
-            if needsDiskRebuild {
-                rebuildInstallationsFromDisk()
-                needsDiskRebuild = false
+            if catalog == manifest.apps {
+                Logger.catalog.info("refreshCatalog: no changes; leaving data model untouched")
+            } else {
+                catalog = manifest.apps
+                lastSuccessfulRefresh = Date()
+                do { try cache.save(manifest) } catch {
+                    Logger.catalog.warning("Could not write catalog cache: \(String(describing: error), privacy: .public)")
+                }
+                Logger.catalog.info("refreshCatalog succeeded: \(manifest.apps.count) apps (generatedAt: \(manifest.generatedAt, privacy: .public))")
+                if needsDiskRebuild {
+                    rebuildInstallationsFromDisk()
+                    needsDiskRebuild = false
+                }
             }
         } catch {
             catalogIsStale = true
@@ -108,17 +118,43 @@ public final class DockyardEngine {
         }
     }
 
+    /// Refreshes catalog + editorial in parallel, but only if at least
+    /// `minInterval` seconds have elapsed since the last attempt. Use this
+    /// from app-focus and menu-refresh triggers to avoid hammering the network.
+    ///
+    /// Errors from the underlying refresh calls are swallowed (the existing
+    /// `catalogIsStale` / `editorialIsStale` flags already surface failure to the UI).
+    public func refreshIfStale(minInterval: TimeInterval) async {
+        if let last = lastRefreshAttempt, Date().timeIntervalSince(last) < minInterval {
+            return
+        }
+        lastRefreshAttempt = Date()
+        async let catalog: Void = {
+            try? await self.refreshCatalog()
+        }()
+        async let editorial: Void = {
+            try? await self.refreshEditorial()
+        }()
+        _ = await (catalog, editorial)
+    }
+
     public func refreshEditorial() async throws {
         Logger.catalog.info("refreshEditorial starting: \(self.editorialURL.absoluteString, privacy: .public)")
         do {
             let loaded = try await editorialLoader.load(from: editorialURL)
-            editorial = loaded
-            lastSuccessfulEditorialRefresh = Date()
-            editorialIsStale = false
-            do { try editorialCache.save(loaded) } catch {
-                Logger.catalog.warning("Could not write editorial cache: \(String(describing: error), privacy: .public)")
+            if editorialIsStale {
+                editorialIsStale = false
             }
-            Logger.catalog.info("refreshEditorial succeeded (generatedAt: \(loaded.generatedAt, privacy: .public))")
+            if editorial == loaded {
+                Logger.catalog.info("refreshEditorial: no changes; leaving data model untouched")
+            } else {
+                editorial = loaded
+                lastSuccessfulEditorialRefresh = Date()
+                do { try editorialCache.save(loaded) } catch {
+                    Logger.catalog.warning("Could not write editorial cache: \(String(describing: error), privacy: .public)")
+                }
+                Logger.catalog.info("refreshEditorial succeeded (generatedAt: \(loaded.generatedAt, privacy: .public))")
+            }
         } catch {
             editorialIsStale = true
             Logger.catalog.error("refreshEditorial failed: \(String(describing: error), privacy: .public)")

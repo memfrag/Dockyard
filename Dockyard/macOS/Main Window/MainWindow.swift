@@ -24,6 +24,7 @@ struct MainWindow: Scene {
         .commands {
             AboutCommand()
             CheckForUpdatesCommand(updater: updater)
+            RefreshCatalogCommand()
             SidebarCommands()
             ExportCommands()
             AlwaysOnTopCommand()
