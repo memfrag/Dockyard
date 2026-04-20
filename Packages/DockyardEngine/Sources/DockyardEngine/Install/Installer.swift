@@ -211,8 +211,26 @@ struct Installer: Sendable {
     static func copyBundle(from source: URL, to destination: URL) throws {
         do {
             if FileManager.default.fileExists(atPath: destination.path) {
-                _ = try FileManager.default.replaceItemAt(destination, withItemAt: source)
+                // `replaceItemAt` uses `renamex_np` which fails with EXDEV
+                // ("Cross-device link") when `source` is on a different filesystem
+                // than `destination` — e.g. DMG mountpoint in /private/tmp vs.
+                // ~/Applications on the user's home volume.
+                //
+                // Stage a copy on the destination's volume first so the replace is
+                // intra-volume and can use rename semantics.
+                let parent = destination.deletingLastPathComponent()
+                let staged = parent.appending(
+                    path: ".dockyard-staging-\(UUID().uuidString)-\(destination.lastPathComponent)"
+                )
+                try FileManager.default.copyItem(at: source, to: staged)
+                do {
+                    _ = try FileManager.default.replaceItemAt(destination, withItemAt: staged)
+                } catch {
+                    try? FileManager.default.removeItem(at: staged)
+                    throw error
+                }
             } else {
+                // Fresh install — `copyItem` handles cross-device just fine.
                 try FileManager.default.copyItem(at: source, to: destination)
             }
         } catch {

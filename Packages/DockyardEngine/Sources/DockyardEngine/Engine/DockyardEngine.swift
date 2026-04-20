@@ -19,6 +19,10 @@ public final class DockyardEngine {
     public private(set) var lastSuccessfulEditorialRefresh: Date?
     public private(set) var editorialIsStale: Bool = false
 
+    /// Bundle identifiers of apps currently running in the user session. Kept in sync
+    /// via AppKit's `didLaunchApplicationNotification` / `didTerminateApplicationNotification`.
+    public private(set) var runningAppBundleIDs: Set<String> = []
+
     // MARK: - Dependencies
 
     @ObservationIgnored private let manifestURL: URL
@@ -50,6 +54,10 @@ public final class DockyardEngine {
     // MARK: - Staleness throttle
 
     @ObservationIgnored private var lastRefreshAttempt: Date?
+
+    // MARK: - Running-app observation
+
+    @ObservationIgnored private var workspaceObservers: [NSObjectProtocol] = []
 
     // MARK: - Init
 
@@ -84,9 +92,15 @@ public final class DockyardEngine {
         loadCachedCatalog()
         loadCachedEditorial()
         loadInstallations()
+        seedRunningApps()
+        installWorkspaceObservers()
         Task { await self.crashCleanup.run() }
         Logger.engine.info("DockyardEngine initialized (manifestURL: \(manifestURL.absoluteString, privacy: .public), cached catalog: \(self.catalog.count), installations: \(self.installations.count))")
     }
+
+    // `workspaceObservers` intentionally does not have a deinit-cleanup step:
+    // the engine's lifetime is the app's lifetime, and accessing main-actor
+    // state from a nonisolated deinit trips strict-concurrency checks.
 
     // MARK: - Public API
 
@@ -308,6 +322,49 @@ public final class DockyardEngine {
         return result.installedApp
     }
 
+    /// Catalog entries whose installed version is strictly less than the version
+    /// advertised in the catalog. Drives the sidebar Updates badge and the pane.
+    public var entriesWithUpdatesAvailable: [CatalogEntry] {
+        catalog.filter { entry in
+            guard let installed = installations.first(where: { $0.id == entry.id }) else { return false }
+            return installed.version.compare(entry.version, options: .numeric) == .orderedAscending
+        }
+    }
+
+    // MARK: - Running-app observation
+
+    private func seedRunningApps() {
+        let identifiers = NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier)
+        runningAppBundleIDs = Set(identifiers)
+    }
+
+    private func installWorkspaceObservers() {
+        let center = NSWorkspace.shared.notificationCenter
+        let launch = center.addObserver(
+            forName: NSWorkspace.didLaunchApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { note in
+            // `queue: .main` guarantees this runs on the main thread.
+            // Extract only the Sendable String here, then hop to MainActor.
+            guard let id = bundleID(from: note) else { return }
+            Task { @MainActor [weak self] in
+                self?.runningAppBundleIDs.insert(id)
+            }
+        }
+        let terminate = center.addObserver(
+            forName: NSWorkspace.didTerminateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { note in
+            guard let id = bundleID(from: note) else { return }
+            Task { @MainActor [weak self] in
+                self?.runningAppBundleIDs.remove(id)
+            }
+        }
+        workspaceObservers = [launch, terminate]
+    }
+
     private func loadCachedCatalog() {
         if let cached = cache.load() {
             catalog = cached.apps
@@ -362,4 +419,11 @@ public final class DockyardEngine {
             }
         }
     }
+}
+
+/// Extracts the bundle identifier from an NSWorkspace launch/terminate notification.
+/// Top-level so it can be called from a nonisolated notification closure without
+/// capturing any actor-isolated state.
+private func bundleID(from note: Notification) -> String? {
+    (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier
 }

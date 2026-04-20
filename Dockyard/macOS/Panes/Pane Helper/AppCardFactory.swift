@@ -41,10 +41,20 @@ enum AppCardFactory {
         engine.installations.first(where: { $0.id == entry.id })
     }
 
+    /// True when the app is installed and the catalog advertises a newer version
+    /// than what's currently on disk.
+    static func updateAvailable(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
+        guard let installed = installedApp(for: entry, engine: engine) else { return false }
+        return installed.version.compare(entry.version, options: .numeric) == .orderedAscending
+    }
+
+    /// True when the app's bundle is currently running in the user session.
+    static func isRunning(_ entry: CatalogEntry, engine: DockyardEngine) -> Bool {
+        engine.runningAppBundleIDs.contains(entry.id)
+    }
+
     static func actionTitle(for entry: CatalogEntry, engine: DockyardEngine) -> String {
-        if installedApp(for: entry, engine: engine) != nil {
-            return "Open"
-        }
+        // In-flight install phases take precedence.
         switch engine.phases[entry.id] ?? .idle {
         case .queued:
             return "Queued"
@@ -58,22 +68,52 @@ enum AppCardFactory {
         case .cancelled, .failed:
             return "Retry"
         case .idle, .installed:
-            return installedApp(for: entry, engine: engine) != nil ? "Open" : "Install"
+            break
         }
+
+        guard installedApp(for: entry, engine: engine) != nil else {
+            return "Install"
+        }
+        if updateAvailable(for: entry, engine: engine) {
+            return isRunning(entry, engine: engine) ? "Quit to Update" : "Update"
+        }
+        return "Open"
     }
 
     static func actionEnabled(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
-        if installedApp(for: entry, engine: engine) != nil { return true }
-        return !(engine.phases[entry.id]?.isInFlight ?? false)
+        if engine.phases[entry.id]?.isInFlight == true {
+            return false
+        }
+        // "Quit to Update" — running app blocks the install; disable the button.
+        if installedApp(for: entry, engine: engine) != nil,
+           updateAvailable(for: entry, engine: engine),
+           isRunning(entry, engine: engine) {
+            return false
+        }
+        return true
     }
 
     static func performAction(for entry: CatalogEntry, engine: DockyardEngine) {
         if let installed = installedApp(for: entry, engine: engine) {
+            if updateAvailable(for: entry, engine: engine), !isRunning(entry, engine: engine) {
+                install(entry, engine: engine)
+                return
+            }
             NSWorkspace.shared.open(installed.bundlePath)
             return
         }
+        install(entry, engine: engine)
+    }
+
+    private static func install(_ entry: CatalogEntry, engine: DockyardEngine) {
         Task {
-            _ = try? await engine.install(entry.id)
+            do {
+                _ = try await engine.install(entry.id)
+            } catch {
+                let reason = (error as? LocalizedError)?.errorDescription
+                    ?? String(describing: error)
+                print("[Dockyard] Install failed for \(entry.id): \(reason)")
+            }
         }
     }
 }

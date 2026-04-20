@@ -80,6 +80,21 @@ struct InstalledPane: View {
     private var cardItems: [AppCardItem] {
         engine.installations.map { installed in
             let entry = engine.catalog.first(where: { $0.id == installed.id })
+            let actionTitle: String
+            let actionEnabled: Bool
+            let progress: Double?
+            let action: () -> Void
+            if let entry {
+                actionTitle = AppCardFactory.actionTitle(for: entry, engine: engine)
+                actionEnabled = AppCardFactory.actionEnabled(for: entry, engine: engine)
+                progress = (engine.phases[entry.id] ?? .idle).downloadFraction
+                action = { AppCardFactory.performAction(for: entry, engine: engine) }
+            } else {
+                actionTitle = "Open"
+                actionEnabled = true
+                progress = nil
+                action = { NSWorkspace.shared.open(installed.bundlePath) }
+            }
             return AppCardItem(
                 id: installed.id,
                 icon: iconSource(for: installed),
@@ -87,9 +102,10 @@ struct InstalledPane: View {
                 title: installed.displayName,
                 description: "Version \(installed.version)",
                 channel: entry?.channel.stringIfNotRelease,
-                actionTitle: "Open",
-                actionEnabled: true,
-                action: { NSWorkspace.shared.open(installed.bundlePath) },
+                actionTitle: actionTitle,
+                actionEnabled: actionEnabled,
+                progress: progress,
+                action: action,
                 menuItems: [
                     AppCardMenuItem(
                         title: "Show in Finder",

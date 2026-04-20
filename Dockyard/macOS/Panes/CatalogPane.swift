@@ -17,6 +17,7 @@ struct CatalogPane: View {
     let emptyMessage: String
     let subtitle: (DockyardEngine, [CatalogEntry]) -> String
     let searchQuery: String?
+    let extraFilter: ((CatalogEntry) -> Bool)?
 
     init(
         title: String,
@@ -26,7 +27,8 @@ struct CatalogPane: View {
         emptyMessage: String,
         subtitle: @escaping (DockyardEngine, [CatalogEntry]) -> String,
         pretitle: String = "Category",
-        searchQuery: String? = nil
+        searchQuery: String? = nil,
+        extraFilter: ((CatalogEntry) -> Bool)? = nil
     ) {
         self.title = title
         self.pretitle = pretitle
@@ -36,6 +38,7 @@ struct CatalogPane: View {
         self.emptyMessage = emptyMessage
         self.subtitle = subtitle
         self.searchQuery = searchQuery
+        self.extraFilter = extraFilter
     }
 
     @Environment(DockyardEngine.self) private var engine
@@ -47,6 +50,9 @@ struct CatalogPane: View {
         var result = engine.catalog
         if let category {
             result = result.filter { $0.category == category }
+        }
+        if let extraFilter {
+            result = result.filter(extraFilter)
         }
         guard let tokens = searchTokens else { return result }
         return Self.rank(entries: result, against: tokens)

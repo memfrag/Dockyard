@@ -11,6 +11,7 @@ enum SidebarPane {
     case today
     case discover
     case installed
+    case updates
 
     // MARK: Categories Section
 

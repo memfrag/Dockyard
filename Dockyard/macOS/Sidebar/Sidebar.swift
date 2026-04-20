@@ -42,6 +42,17 @@ struct Sidebar: View {
                             CountBadge(count: engine.installations.count)
                         }
                     }
+
+                    NavigationLink(value: SidebarPane.updates) {
+                        HStack {
+                            Label("Updates", systemImage: "arrow.triangle.2.circlepath")
+                            Spacer(minLength: 8)
+                            let count = engine.entriesWithUpdatesAvailable.count
+                            if count > 0 {
+                                CountBadge(count: count)
+                            }
+                        }
+                    }
                 }
 
                 Section(header: Text("Categories")) {
@@ -94,6 +105,8 @@ struct Sidebar: View {
                     DiscoverPane()
                 case .installed:
                     InstalledPane()
+                case .updates:
+                    UpdatesPane()
                 case .design:
                     DesignPane()
                 case .development:
