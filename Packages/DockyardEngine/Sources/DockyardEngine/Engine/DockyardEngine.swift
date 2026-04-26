@@ -324,10 +324,17 @@ public final class DockyardEngine {
 
     /// Catalog entries whose installed version is strictly less than the version
     /// advertised in the catalog. Drives the sidebar Updates badge and the pane.
+    ///
+    /// Compares against `manifestVersion` (the catalog version we last installed)
+    /// rather than the on-disk plist version, so a publisher who ships a DMG with
+    /// a stale `CFBundleShortVersionString` doesn't trap the user in an infinite
+    /// "Update" loop — `AppCardFactory.hasVersionMismatch(...)` surfaces that case
+    /// separately.
     public var entriesWithUpdatesAvailable: [CatalogEntry] {
         catalog.filter { entry in
             guard let installed = installations.first(where: { $0.id == entry.id }) else { return false }
-            return installed.version.compare(entry.version, options: .numeric) == .orderedAscending
+            let baseline = installed.manifestVersion ?? installed.version
+            return baseline.compare(entry.version, options: .numeric) == .orderedAscending
         }
     }
 

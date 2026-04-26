@@ -30,6 +30,7 @@ public struct AppCardItem: Identifiable {
     public let title: String
     public let description: String
     public let channel: String?
+    public let versionMismatch: Bool
     public let actionTitle: String
     public let actionEnabled: Bool
     public let progress: Double?
@@ -44,6 +45,7 @@ public struct AppCardItem: Identifiable {
         title: String,
         description: String,
         channel: String?,
+        versionMismatch: Bool = false,
         actionTitle: String = "Open",
         actionEnabled: Bool = true,
         progress: Double? = nil,
@@ -57,6 +59,7 @@ public struct AppCardItem: Identifiable {
         self.title = title
         self.description = description
         self.channel = channel
+        self.versionMismatch = versionMismatch
         self.actionTitle = actionTitle
         self.actionEnabled = actionEnabled
         self.progress = progress
@@ -118,6 +121,7 @@ public struct AppCardGrid: View {
                     title: item.title,
                     description: item.description,
                     channel: item.channel,
+                    versionMismatch: item.versionMismatch,
                     actionTitle: item.actionTitle,
                     actionEnabled: item.actionEnabled,
                     progress: item.progress,

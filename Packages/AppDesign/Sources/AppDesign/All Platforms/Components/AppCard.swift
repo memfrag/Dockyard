@@ -9,6 +9,7 @@ public struct AppCard: View {
     private let title: String
     private let description: String
     private let channel: String?
+    private let versionMismatch: Bool
     private let actionTitle: String
     private let actionEnabled: Bool
     private let progress: Double?
@@ -22,6 +23,7 @@ public struct AppCard: View {
         title: String,
         description: String,
         channel: String?,
+        versionMismatch: Bool = false,
         actionTitle: String = "Open",
         actionEnabled: Bool = true,
         progress: Double? = nil,
@@ -34,6 +36,7 @@ public struct AppCard: View {
         self.title = title
         self.description = description
         self.channel = channel
+        self.versionMismatch = versionMismatch
         self.actionTitle = actionTitle
         self.actionEnabled = actionEnabled
         self.progress = progress
@@ -79,6 +82,9 @@ public struct AppCard: View {
                             .lineLimit(1)
                         if let channel {
                             ChannelBadge(channel)
+                        }
+                        if versionMismatch {
+                            VersionMismatchBadge()
                         }
                     }
                     Text(title)

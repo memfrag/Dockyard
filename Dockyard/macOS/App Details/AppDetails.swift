@@ -60,6 +60,12 @@ struct AppDetailsView: View {
                         }
                     }
 
+                    if let installed = engine.installations.first(where: { $0.id == entry.id }),
+                       installed.hasVersionMismatch {
+                        versionMismatchNotice(installed: installed)
+                            .padding(.top, 12)
+                    }
+
                     Divider()
                         .opacity(0.5)
                         .padding(.top, 12)
@@ -151,6 +157,29 @@ struct AppDetailsView: View {
                     .tint(.accentColor)
                     .frame(maxWidth: 320)
             }
+        }
+    }
+
+    @ViewBuilder private func versionMismatchNotice(installed: InstalledApp) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+                .font(.title3)
+                .help("The installed bundle's CFBundleShortVersionString doesn't match the catalog version Dockyard installed.")
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Version mismatch")
+                    .font(.subheadline.weight(.semibold))
+                Text("Installed bundle reports \(installed.version), but the catalog ships \(installed.manifestVersion ?? entry.version). The publisher likely tagged a release without bumping CFBundleShortVersionString.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.orange.opacity(0.12))
         }
     }
 

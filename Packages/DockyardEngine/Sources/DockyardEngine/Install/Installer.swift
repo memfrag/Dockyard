@@ -149,10 +149,16 @@ struct Installer: Sendable {
             // 10. Track
             onPhase(.finalizing)
             let version = (try? Self.shortVersion(at: destination)) ?? entry.version
+            if version != entry.version {
+                Logger.installer.warning(
+                    "Version mismatch for \(entry.id, privacy: .public): catalog says \(entry.version, privacy: .public), bundle Info.plist says \(version, privacy: .public). The published DMG appears to ship a stale CFBundleShortVersionString."
+                )
+            }
             let installed = InstalledApp(
                 id: entry.id,
                 displayName: entry.displayName,
                 version: version,
+                manifestVersion: entry.version,
                 bundlePath: destination,
                 installedAt: Date()
             )

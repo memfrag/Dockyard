@@ -22,6 +22,7 @@ enum AppCardFactory {
             title: entry.displayName,
             description: entry.summary,
             channel: entry.channel.stringIfNotRelease,
+            versionMismatch: hasVersionMismatch(for: entry, engine: engine),
             actionTitle: actionTitle(for: entry, engine: engine),
             actionEnabled: actionEnabled(for: entry, engine: engine),
             progress: (engine.phases[entry.id] ?? .idle).downloadFraction,
@@ -42,10 +43,23 @@ enum AppCardFactory {
     }
 
     /// True when the app is installed and the catalog advertises a newer version
-    /// than what's currently on disk.
+    /// than what we last installed.
+    ///
+    /// Uses `manifestVersion` (catalog version at install time) so an upstream DMG
+    /// shipped with a stale `CFBundleShortVersionString` doesn't keep the button
+    /// stuck on "Update" forever. Falls back to the on-disk version for legacy
+    /// records that predate `manifestVersion`.
     static func updateAvailable(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
         guard let installed = installedApp(for: entry, engine: engine) else { return false }
-        return installed.version.compare(entry.version, options: .numeric) == .orderedAscending
+        let baseline = installed.manifestVersion ?? installed.version
+        return baseline.compare(entry.version, options: .numeric) == .orderedAscending
+    }
+
+    /// True when we have a recorded `manifestVersion` for this app and it disagrees
+    /// with what's actually in the installed bundle's `Info.plist` — i.e., the
+    /// publisher tagged a release without bumping `CFBundleShortVersionString`.
+    static func hasVersionMismatch(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
+        installedApp(for: entry, engine: engine)?.hasVersionMismatch ?? false
     }
 
     /// True when the app's bundle is currently running in the user session.

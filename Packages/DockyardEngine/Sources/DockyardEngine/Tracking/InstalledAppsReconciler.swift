@@ -41,6 +41,7 @@ struct InstalledAppsReconciler: Sendable {
                 id: bundleID,
                 displayName: entry.displayName,
                 version: version,
+                manifestVersion: entry.version,
                 bundlePath: appURL,
                 installedAt: installedAt
             ))

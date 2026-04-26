@@ -100,8 +100,9 @@ struct InstalledPane: View {
                 icon: iconSource(for: installed),
                 category: entry?.category ?? "Installed",
                 title: installed.displayName,
-                description: "Version \(installed.version)",
+                description: versionDescription(for: installed),
                 channel: entry?.channel.stringIfNotRelease,
+                versionMismatch: installed.hasVersionMismatch,
                 actionTitle: actionTitle,
                 actionEnabled: actionEnabled,
                 progress: progress,
@@ -126,6 +127,13 @@ struct InstalledPane: View {
                 }
             )
         }
+    }
+
+    private func versionDescription(for installed: InstalledApp) -> String {
+        if let manifestVersion = installed.manifestVersion, manifestVersion != installed.version {
+            return "Version \(installed.version) (catalog: \(manifestVersion))"
+        }
+        return "Version \(installed.version)"
     }
 
     private func iconSource(for installed: InstalledApp) -> AppIconSource {
