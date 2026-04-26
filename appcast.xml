@@ -3,6 +3,15 @@
     <channel>
         <title>Dockyard</title>
         <item>
+            <title>1.2.4</title>
+            <pubDate>Sun, 26 Apr 2026 18:25:46 +0200</pubDate>
+            <sparkle:version>1.2.4</sparkle:version>
+            <sparkle:shortVersionString>1.2.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/memfrag/Dockyard/releases/download/1.2.4/Dockyard-1.2.4.dmg" length="5082171" type="application/octet-stream" sparkle:edSignature="3v/lbsE0LJmsprj9LYyTjmsubjJBLpI90dYbbKi+25aPvNExrqvAHopmMZ12XzJ4ZU3o0ojn/Q0quwH7NBt5Bw=="/>
+        </item>
+        <item>
             <title>1.1.0</title>
             <pubDate>Mon, 20 Apr 2026 23:50:15 +0200</pubDate>
             <sparkle:version>1.1.0</sparkle:version>
@@ -19,15 +28,6 @@
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/memfrag/Dockyard/releases/download/1.0.2/Dockyard-1.0.2.dmg" length="6772009" type="application/octet-stream" sparkle:edSignature="33eMs8OqyBCTl74CliFPZUdvOFZsECTSTXid5CwF67qlArV4ir8uXDWINCv1/xwU/IDt5KsxFwB1C+uWDShVCw=="/>
-        </item>
-        <item>
-            <title>1.0.1</title>
-            <pubDate>Mon, 20 Apr 2026 00:43:29 +0200</pubDate>
-            <sparkle:version>1.0.1</sparkle:version>
-            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/memfrag/Dockyard/releases/download/1.0.1/Dockyard-1.0.1.dmg" length="6771951" type="application/octet-stream" sparkle:edSignature="DC2INXX6Qm1NVi8EwdR96nLAYiQ9rkjHHBDTuliPP0WM4VHKj63sguLxVzyyJs9OrnG/tf6vCB+Iq+FqF0UqBg=="/>
         </item>
     </channel>
 </rss>
