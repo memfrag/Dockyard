@@ -5,10 +5,19 @@ struct ManifestBuilder {
 
     let api: GitHubAPIClient
     let hasher: RemoteHasher?
+    let previous: PreviousManifest
+    let forceHash: Bool
 
-    init(api: GitHubAPIClient, hasher: RemoteHasher?) {
+    init(
+        api: GitHubAPIClient,
+        hasher: RemoteHasher?,
+        previous: PreviousManifest = PreviousManifest(),
+        forceHash: Bool = false
+    ) {
         self.api = api
         self.hasher = hasher
+        self.previous = previous
+        self.forceHash = forceHash
     }
 
     func build(config: AuthoringConfig) async throws -> CatalogManifest {
@@ -19,13 +28,22 @@ struct ManifestBuilder {
             let owner = authoring.github.owner
             let repo = authoring.github.repo
 
-            let release = try await api.latestRelease(owner: owner, repo: repo)
-            let asset = try AssetSelector.select(from: release.assets, pattern: authoring.assetPattern)
-
-            var sha256: String? = assetDigestSHA256(asset)
-            if sha256 == nil, let hasher {
-                sha256 = try await hasher.sha256(of: asset.browserDownloadURL)
+            let repoMetadata = try await fetchRepoMetadata(owner: owner, repo: repo)
+            let repoIconURL: URL? = if authoring.iconURL == nil {
+                try await api.getFile(owner: owner, repo: repo, path: ".dockyard/AppIcon.png")?.downloadURL
+            } else {
+                nil
             }
+            let metadata = try ResolvedAppMetadata.merge(
+                config: authoring,
+                repo: repoMetadata,
+                repoIconURL: repoIconURL
+            )
+
+            let release = try await api.latestRelease(owner: owner, repo: repo)
+            let asset = try AssetSelector.select(from: release.assets, pattern: metadata.assetPattern)
+
+            let sha256 = try await resolveSHA256(id: metadata.id, asset: asset, displayName: metadata.displayName)
 
             let screenshotURLs = try await fetchScreenshotURLs(owner: owner, repo: repo)
             let aboutURL = try await api
@@ -35,17 +53,17 @@ struct ManifestBuilder {
             let requiredVersion = try await fetchRequiredVersion(owner: owner, repo: repo)
 
             let entry = CatalogEntry(
-                id: authoring.id,
-                displayName: authoring.displayName,
-                category: authoring.category,
-                summary: authoring.summary,
-                iconURL: authoring.iconURL,
+                id: metadata.id,
+                displayName: metadata.displayName,
+                category: metadata.category,
+                summary: metadata.summary,
+                iconURL: metadata.iconURL,
                 version: release.versionFromTag,
                 dmgURL: asset.browserDownloadURL,
                 dmgSize: asset.size,
                 dmgSHA256: sha256,
                 github: GitHubRepo(owner: owner, repo: repo),
-                channel: authoring.channel ?? .release,
+                channel: metadata.channel,
                 screenshotURLs: screenshotURLs,
                 aboutURL: aboutURL,
                 releaseNotes: release.body?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty,
@@ -56,6 +74,49 @@ struct ManifestBuilder {
         }
 
         return CatalogManifest(generatedAt: Date(), apps: entries)
+    }
+
+    /// Three-tier hash resolution: GitHub's asset digest (free), then the hash
+    /// cached in the previous manifest (matched on URL + size), then — only
+    /// for a genuinely new release — downloading the DMG to hash it.
+    private func resolveSHA256(id: String, asset: GitHubAsset, displayName: String) async throws -> String? {
+        if let digest = assetDigestSHA256(asset) {
+            logHash(displayName, tier: "digest")
+            return digest
+        }
+        if !forceHash,
+           let cached = previous.cachedSHA256(id: id, dmgURL: asset.browserDownloadURL, dmgSize: asset.size) {
+            logHash(displayName, tier: "cached")
+            return cached
+        }
+        if let hasher {
+            let hash = try await hasher.sha256(of: asset.browserDownloadURL)
+            logHash(displayName, tier: "downloaded")
+            return hash
+        }
+        logHash(displayName, tier: "none")
+        return nil
+    }
+
+    private func logHash(_ name: String, tier: String) {
+        FileHandle.standardError.write(Data("\(name): hash: \(tier)\n".utf8))
+    }
+
+    /// Fetches the app repo's own `.dockyard/dockyard.json`. A missing file is
+    /// fine (nil); an unreachable or malformed one is a hard error so a broken
+    /// metadata file can't silently drop an app from the catalog.
+    private func fetchRepoMetadata(owner: String, repo: String) async throws -> RepoMetadata? {
+        guard let file = try await api.getFile(owner: owner, repo: repo, path: ".dockyard/dockyard.json"),
+              let downloadURL = file.downloadURL else {
+            return nil
+        }
+        let data: Data
+        do {
+            (data, _) = try await URLSession.shared.data(from: downloadURL)
+        } catch {
+            throw RepoMetadataError.malformed(owner: owner, repo: repo, underlying: "download failed: \(error)")
+        }
+        return try RepoMetadata.decode(data, owner: owner, repo: repo)
     }
 
     private func fetchScreenshotURLs(owner: String, repo: String) async throws -> [URL] {

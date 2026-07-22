@@ -21,6 +21,10 @@ let package = Package(
                 "DockyardEngine",
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ]
+        ),
+        .testTarget(
+            name: "DockyardManifestToolTests",
+            dependencies: ["DockyardManifestTool"]
         )
     ]
 )
