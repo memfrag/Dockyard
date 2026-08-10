@@ -30,7 +30,9 @@ struct ManifestBuilder {
 
             let repoMetadata = try await fetchRepoMetadata(owner: owner, repo: repo)
             let repoIconURL: URL? = if authoring.iconURL == nil {
-                try await api.getFile(owner: owner, repo: repo, path: ".dockyard/AppIcon.png")?.downloadURL
+                AssetURLVersioning.versionedDownloadURL(
+                    of: try await api.getFile(owner: owner, repo: repo, path: ".dockyard/AppIcon.png")
+                )
             } else {
                 nil
             }
@@ -46,9 +48,9 @@ struct ManifestBuilder {
             let sha256 = try await resolveSHA256(id: metadata.id, asset: asset, displayName: metadata.displayName)
 
             let screenshotURLs = try await fetchScreenshotURLs(owner: owner, repo: repo)
-            let aboutURL = try await api
-                .getFile(owner: owner, repo: repo, path: ".dockyard/about.md")?
-                .downloadURL
+            let aboutURL = AssetURLVersioning.versionedDownloadURL(
+                of: try await api.getFile(owner: owner, repo: repo, path: ".dockyard/about.md")
+            )
             let developer = try await fetchDeveloperName(owner: owner)
             let requiredVersion = try await fetchRequiredVersion(owner: owner, repo: repo)
 
@@ -127,8 +129,8 @@ struct ManifestBuilder {
         )
         return entries
             .filter { $0.type == "file" && Self.isImage($0.name) }
-            .compactMap { $0.downloadURL }
-            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+            .sorted { $0.name < $1.name }
+            .compactMap { AssetURLVersioning.versionedDownloadURL(of: $0) }
     }
 
     /// Uses the GitHub owner's display `name` (falls back to the login handle if not
