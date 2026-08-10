@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 enum DmgInspectorError: Error, CustomStringConvertible {
@@ -20,14 +21,20 @@ enum DmgInspectorError: Error, CustomStringConvertible {
     }
 }
 
-/// Mounts a DMG read-only, reads the first `.app` bundle's Info.plist, and
-/// detaches again. Used by the `add` command to discover an app's bundle
-/// identifier and name when the repo has no `.dockyard/dockyard.json` yet.
+/// Mounts a DMG read-only, reads the first `.app` bundle's Info.plist and icon,
+/// and detaches again. Used by the `add` command to discover an app's bundle
+/// identifier, name and icon when the repo has no `.dockyard/` folder yet.
 struct DmgInspector {
+
+    /// Pixel size of the extracted `AppIcon.png` — 256pt @2x, comfortably above
+    /// every place Dockyard renders a catalog icon.
+    static let iconPixelSize = 512
 
     struct AppInfo {
         let bundleID: String
         let name: String
+        /// PNG data for `.dockyard/AppIcon.png`, or nil when no icon could be extracted.
+        let iconPNG: Data?
     }
 
     func inspect(dmgAt url: URL) throws -> AppInfo {
@@ -39,9 +46,8 @@ struct DmgInspector {
             throw DmgInspectorError.noAppBundle(mountPoint: mountPoint)
         }
 
-        let plistURL = URL(fileURLWithPath: mountPoint)
-            .appending(path: appName)
-            .appending(path: "Contents/Info.plist")
+        let appURL = URL(fileURLWithPath: mountPoint).appending(path: appName)
+        let plistURL = appURL.appending(path: "Contents/Info.plist")
         let data = try Data(contentsOf: plistURL)
         guard let plist = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
               let bundleID = plist["CFBundleIdentifier"] as? String else {
@@ -50,7 +56,93 @@ struct DmgInspector {
         let name = (plist["CFBundleDisplayName"] as? String)
             ?? (plist["CFBundleName"] as? String)
             ?? String(appName.dropLast(".app".count))
-        return AppInfo(bundleID: bundleID, name: name)
+        return AppInfo(bundleID: bundleID, name: name, iconPNG: iconPNG(appURL: appURL, plist: plist))
+    }
+
+    // MARK: - Icon extraction
+
+    /// Extracts an app bundle's icon as PNG, reading its Info.plist for the icon name.
+    func iconPNG(appAt appURL: URL) -> Data? {
+        let plistURL = appURL.appending(path: "Contents/Info.plist")
+        let plist = (try? Data(contentsOf: plistURL))
+            .flatMap { try? PropertyListSerialization.propertyList(from: $0, format: nil) as? [String: Any] }
+        return iconPNG(appURL: appURL, plist: plist ?? [:])
+    }
+
+    /// Best-effort: converts the bundle's `.icns` with `sips`, falling back to the
+    /// icon the Finder would show (which also covers apps whose icon only exists
+    /// inside a compiled `Assets.car`).
+    private func iconPNG(appURL: URL, plist: [String: Any]) -> Data? {
+        if let icns = icnsURL(appURL: appURL, plist: plist), let png = convertToPNG(icns) {
+            return png
+        }
+        return renderWorkspaceIcon(appURL: appURL)
+    }
+
+    private func icnsURL(appURL: URL, plist: [String: Any]) -> URL? {
+        let resources = appURL.appending(path: "Contents/Resources")
+        let fileManager = FileManager.default
+
+        if let iconFile = plist["CFBundleIconFile"] as? String, !iconFile.isEmpty {
+            let named = iconFile.hasSuffix(".icns") ? iconFile : iconFile + ".icns"
+            let url = resources.appending(path: named)
+            if fileManager.fileExists(atPath: url.path) {
+                return url
+            }
+        }
+
+        let icns = ((try? fileManager.contentsOfDirectory(atPath: resources.path)) ?? [])
+            .filter { $0.hasSuffix(".icns") }
+            .sorted()
+        return (icns.first { $0 == "AppIcon.icns" } ?? icns.first).map { resources.appending(path: $0) }
+    }
+
+    private func convertToPNG(_ icns: URL) -> Data? {
+        let output = FileManager.default.temporaryDirectory
+            .appending(path: "dockyard-icon-\(UUID().uuidString).png")
+        defer { try? FileManager.default.removeItem(at: output) }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/sips")
+        process.arguments = [
+            "-s", "format", "png",
+            "-Z", "\(Self.iconPixelSize)",
+            icns.path,
+            "--out", output.path
+        ]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+
+        guard (try? process.run()) != nil else { return nil }
+        process.waitUntilExit()
+        guard process.terminationStatus == 0 else { return nil }
+        return try? Data(contentsOf: output)
+    }
+
+    private func renderWorkspaceIcon(appURL: URL) -> Data? {
+        let size = Self.iconPixelSize
+        let icon = NSWorkspace.shared.icon(forFile: appURL.path)
+        guard let rep = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: size,
+            pixelsHigh: size,
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: 0,
+            bitsPerPixel: 0
+        ) else {
+            return nil
+        }
+        rep.size = NSSize(width: size, height: size)
+
+        NSGraphicsContext.saveGraphicsState()
+        defer { NSGraphicsContext.restoreGraphicsState() }
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        icon.draw(in: NSRect(x: 0, y: 0, width: size, height: size))
+        return rep.representation(using: .png, properties: [:])
     }
 
     private func attach(_ url: URL) throws -> String {

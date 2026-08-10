@@ -8,7 +8,7 @@ The tool reads a small JSON config listing app repos, queries the GitHub API for
 
 | Task | Command |
 |------|---------|
-| Add a new app to the catalog | `swift run dockyard-manifest-tool add owner/repo --config .../dockyard.config.json` |
+| Add a new app to the catalog | `./add-app.sh` (or `swift run dockyard-manifest-tool add owner/repo --config .../dockyard.config.json`) |
 | Publish new releases (local) | `./publish.sh` (or `swift run dockyard-manifest-tool publish --manifest-repo ...`) |
 | Publish new releases (CI) | Nothing — the DockyardManifest repo's scheduled workflow picks them up daily |
 | Build without committing | `./update-manifest.sh` (or the `build` subcommand) |
@@ -78,6 +78,7 @@ Each app repo can carry its own catalog metadata in a `.dockyard/` folder at the
 ```
 
 - After merging config + repo metadata, `id`, `displayName`, `category`, `summary`, and an icon must be present — otherwise the build fails with exit code 6 telling you which fields are missing. Literal `"TODO"` values (from a fresh scaffold) count as missing.
+- `AppIcon.png` should be a square PNG with alpha, **512×512 pixels** (256×256 points @2x). `add` extracts one at that size from the app bundle for you.
 - `about.md` and `screenshots/` are optional. If absent, the manifest simply omits those sections.
 - Screenshot files should be **680×420 pixels** (340×210 points @2x) so they render crisp in the App Details view.
 - Release notes for the "What's New" section come from the GitHub release description (`body`); cutting a new release automatically updates Dockyard on the next manifest build.
@@ -85,12 +86,44 @@ Each app repo can carry its own catalog metadata in a `.dockyard/` folder at the
 ## 3. Adding a new app: `add`
 
 ```
+./add-app.sh                      # asks for the repo, then does the rest
+./add-app.sh apparata/widget-mac  # or name it up front
+```
+
+`add-app.sh` fills in the config path (override it with `DOCKYARD_CONFIG`), forwards any extra arguments to the command below, and offers to reveal the scaffold in Finder when it made one. The long form:
+
+```
 swift run dockyard-manifest-tool add apparata/widget-mac \
   --config ../../../DockyardManifest/dockyard.config.json
 ```
 
-- If the repo already has `.dockyard/dockyard.json`, the command just validates it and appends `{ "github": ... }` to the config.
-- If not, it downloads the latest release DMG **once**, mounts it to read the app's `CFBundleIdentifier` and name, and prints (or writes with `--scaffold-out <path>`) a ready-to-commit `dockyard.json` scaffold — commit that to the app repo, fill in the TODO fields, and the next build picks it up.
+- If the repo already publishes a complete `.dockyard/` folder, the command just validates it and appends `{ "github": ... }` to the config.
+- If anything is missing, it downloads the latest release DMG **once**, mounts it to read the app's `CFBundleIdentifier`, name and icon, and writes a ready-to-commit `.dockyard/` folder to a temp directory:
+
+  ```
+  Scaffolded into /var/folders/.../T/dockyard-scaffold/apparata-widget-mac:
+    .dockyard/dockyard.json
+    .dockyard/AppIcon.png
+    .dockyard/about.md
+    .dockyard/screenshots/README.md
+
+  Next steps:
+    1. Copy the scaffold into apparata/widget-mac:
+         cp -R /var/folders/.../dockyard-scaffold/apparata-widget-mac/.dockyard <path-to-repo>/
+    2. Fill in the TODO fields in .dockyard/dockyard.json and about.md
+    3. Commit and push, then run build (or publish) to add the app to the catalog
+  ```
+
+- `AppIcon.png` is extracted from the app bundle at 512×512 — from its `.icns` when it has one, otherwise by rendering the icon the Finder shows (which covers icons that only exist inside a compiled `Assets.car`). If neither works, the command warns and leaves the file out.
+- Only the missing pieces are scaffolded, so copying the folder into the repo can't clobber metadata the repo already publishes. `about.md` and `screenshots/` are seeded only on fresh onboarding (no `dockyard.json` at all).
+- Existing files at the destination are never overwritten — they're reported as `left alone; already there`. Scaffolding straight into a checkout is therefore safe:
+
+  ```
+  ./add-app.sh memfrag/Flowplan --scaffold-out ../../../Flowplan
+  ```
+
+- Re-running `add` for a repo that's already in the config is fine: the config is left untouched and only the missing `.dockyard/` pieces are written. That's how you finish a half-done folder — e.g. a repo that has `AppIcon.png` and `about.md` but no `dockyard.json`.
+- `--force-scaffold` regenerates every file and **overwrites** what's already there. Use it to refresh an icon after a redesign; don't point it at a repo whose `about.md` you care about.
 - Note: rewriting the config normalizes its JSON formatting (pretty-printed, sorted keys) the first time.
 
 ## 4. Hashes (`dmgSHA256`)
