@@ -125,10 +125,39 @@ public final class DockyardEngine {
                     needsDiskRebuild = false
                 }
             }
+            // After any successful load, not just a changed one: orphans outlive
+            // the refresh that created them, so a launch where nothing changed is
+            // still the right moment to sweep them.
+            pruneAssetCaches(for: manifest.apps)
         } catch {
             catalogIsStale = true
             Logger.catalog.error("refreshCatalog failed: \(String(describing: error), privacy: .public)")
             throw error
+        }
+    }
+
+    /// Sweeps icon/screenshot/about files the new catalog no longer references.
+    ///
+    /// Asset URLs carry the file's content hash, so an upstream edit orphans the
+    /// revision already on disk; without this the caches would grow with every
+    /// edit any app ever publishes. Runs off the main actor — it's disk work — and
+    /// never against an empty catalog, which would sweep everything.
+    private func pruneAssetCaches(for apps: [CatalogEntry]) {
+        guard !apps.isEmpty else { return }
+
+        let icons = Set(apps.map(\.iconURL))
+        let screenshots = Set(apps.flatMap(\.screenshotURLs))
+        let abouts = Set(apps.compactMap(\.aboutURL))
+        let (iconCache, screenshotCache, aboutCache) = (iconCache, screenshotCache, aboutCache)
+
+        Task.detached(priority: .utility) {
+            let outcome = iconCache.prune(keeping: icons)
+                + screenshotCache.prune(keeping: screenshots)
+                + aboutCache.prune(keeping: abouts)
+            guard outcome.removedFiles > 0 else { return }
+            Logger.catalog.info(
+                "Evicted \(outcome.removedFiles, privacy: .public) stale cached asset(s), reclaiming \(outcome.reclaimedBytes, privacy: .public) bytes"
+            )
         }
     }
 

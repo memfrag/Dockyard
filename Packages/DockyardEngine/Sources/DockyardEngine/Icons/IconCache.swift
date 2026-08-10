@@ -26,6 +26,16 @@ public struct IconCache: Sendable {
         return file
     }
 
+    /// Evicts cached icons for URLs outside `liveURLs` — superseded revisions and
+    /// apps no longer in the catalog.
+    @discardableResult
+    public func prune(keeping liveURLs: Set<URL>) -> AssetCachePruner.Outcome {
+        AssetCachePruner.prune(
+            directory: directory,
+            keeping: Set(liveURLs.map { cacheFile(for: $0).lastPathComponent })
+        )
+    }
+
     func cacheFile(for iconURL: URL) -> URL {
         let key = Self.cacheKey(for: iconURL)
         let ext = iconURL.pathExtension.isEmpty ? "png" : iconURL.pathExtension

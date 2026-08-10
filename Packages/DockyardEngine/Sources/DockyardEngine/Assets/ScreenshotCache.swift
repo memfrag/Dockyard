@@ -26,6 +26,16 @@ public struct ScreenshotCache: Sendable {
         return file
     }
 
+    /// Evicts cached screenshots for URLs outside `liveURLs` — superseded revisions
+    /// and apps no longer in the catalog.
+    @discardableResult
+    public func prune(keeping liveURLs: Set<URL>) -> AssetCachePruner.Outcome {
+        AssetCachePruner.prune(
+            directory: directory,
+            keeping: Set(liveURLs.map { cacheFile(for: $0).lastPathComponent })
+        )
+    }
+
     func cacheFile(for remoteURL: URL) -> URL {
         let key = Self.cacheKey(for: remoteURL)
         let ext = remoteURL.pathExtension.isEmpty ? "png" : remoteURL.pathExtension
