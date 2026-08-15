@@ -185,14 +185,14 @@ function renderRoute() {
             renderCatalog({
                 title: "Discover",
                 pretitle: "Catalog",
-                description: `${state.manifest.apps.length} app${state.manifest.apps.length === 1 ? "" : "s"} available`,
-                entries: state.manifest.apps
+                description: `${allApps().length} app${allApps().length === 1 ? "" : "s"} available`,
+                entries: allApps()
             });
             updateActiveNav("#/discover");
             break;
         case "category": {
             const cat = parsed.category;
-            const filtered = state.manifest.apps.filter(e => e.category === cat);
+            const filtered = allApps().filter(e => e.category === cat);
             renderCatalog({
                 title: cat,
                 pretitle: "Category",
@@ -207,7 +207,7 @@ function renderRoute() {
             break;
         }
         case "app": {
-            const entry = state.manifest.apps.find(e => e.id === parsed.id);
+            const entry = allApps().find(e => e.id === parsed.id);
             if (!entry) {
                 renderCatalog({
                     title: "Not found",
@@ -242,7 +242,7 @@ function bindSearchField() {
 }
 
 function renderSearch(query) {
-    const results = rank(state.manifest.apps, query);
+    const results = rank(allApps(), query);
     renderCatalog({
         title: "Search",
         pretitle: "Search",
@@ -343,8 +343,12 @@ function renderDetails(entry) {
     row.appendChild(appIcon(entry, "details-icon"));
     const body = el("div", { class: "details-header-body" });
 
+    const detailsWebHref = webURLFor(entry);
     const categoryRow = el("div", { class: "card-category-row" });
     categoryRow.appendChild(textEl("span", "details-category", entry.category || ""));
+    if (detailsWebHref) {
+        categoryRow.appendChild(textEl("span", "web-badge", "Web"));
+    }
     if (entry.channel && entry.channel !== "Release") {
         categoryRow.appendChild(textEl("span", "channel-badge", entry.channel));
     }
@@ -353,7 +357,9 @@ function renderDetails(entry) {
     body.appendChild(textEl("p", "details-summary", entry.summary || ""));
 
     const actions = el("div", { class: "details-actions" });
-    actions.appendChild(downloadLink(entry, "Download", "capsule-btn accent"));
+    actions.appendChild(detailsWebHref
+        ? externalLink(detailsWebHref, "Open", "capsule-btn accent")
+        : downloadLink(entry, "Download", "capsule-btn accent"));
     if (entry.github) {
         const gh = entry.github;
         const href = `https://github.com/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}`;
@@ -367,8 +373,17 @@ function renderDetails(entry) {
 
     // Properties
     const props = el("div", { class: "details-properties" });
-    props.appendChild(propertyBlock("Version", entry.version));
-    props.appendChild(propertyBlock("Size", formatBytes(entry.dmgSize)));
+    // A web app has no version or download size; the site it opens stands in,
+    // so the row is never left empty.
+    if (entry.version) {
+        props.appendChild(propertyBlock("Version", entry.version));
+    }
+    if (typeof entry.dmgSize === "number" && entry.dmgSize > 0) {
+        props.appendChild(propertyBlock("Size", formatBytes(entry.dmgSize)));
+    }
+    if (detailsWebHref) {
+        props.appendChild(propertyBlock("Website", hostOf(detailsWebHref)));
+    }
     if (entry.requiredVersion) {
         props.appendChild(propertyBlock("Requires", `macOS ${entry.requiredVersion}`));
     }
@@ -400,7 +415,7 @@ function renderDetails(entry) {
     if (entry.releaseNotes && entry.releaseNotes.trim()) {
         pane.appendChild(el("div", { class: "details-divider" }));
         const section = el("div", { class: "details-section" });
-        section.appendChild(textEl("h2", "details-section-title", `What's New in ${entry.version}`));
+        section.appendChild(textEl("h2", "details-section-title", entry.version ? `What's New in ${entry.version}` : "What's New"));
         section.appendChild(markdownBlock(entry.releaseNotes));
         pane.appendChild(section);
     }
@@ -475,6 +490,10 @@ function appCard(entry) {
     const body = el("div", { class: "app-card-body" });
     const catRow = el("div", { class: "card-category-row" });
     catRow.appendChild(textNode(entry.category || ""));
+    const webHref = webURLFor(entry);
+    if (webHref) {
+        catRow.appendChild(textEl("span", "web-badge", "Web"));
+    }
     if (entry.channel && entry.channel !== "Release") {
         catRow.appendChild(textEl("span", "channel-badge", entry.channel));
     }
@@ -483,7 +502,9 @@ function appCard(entry) {
     body.appendChild(textEl("div", "app-card-description", entry.summary || ""));
 
     row.appendChild(body);
-    row.appendChild(downloadLink(entry, "Download", "capsule-btn"));
+    row.appendChild(webHref
+        ? externalLink(webHref, "Open", "capsule-btn")
+        : downloadLink(entry, "Download", "capsule-btn"));
     card.appendChild(row);
     return card;
 }
@@ -534,10 +555,16 @@ function editorsPick(pick, entry) {
 
     const info = el("div", { class: "editors-pick-app" });
     info.appendChild(textEl("div", "editors-pick-name", entry.displayName || ""));
-    info.appendChild(textEl("div", "editors-pick-author", entry.developer ? `by ${entry.developer}` : `Version ${entry.version || ""}`));
+    const pickWebHref = webURLFor(entry);
+    const byline = entry.developer
+        ? `by ${entry.developer}`
+        : (entry.version ? `Version ${entry.version}` : hostOf(pickWebHref));
+    info.appendChild(textEl("div", "editors-pick-author", byline));
     footer.appendChild(info);
 
-    footer.appendChild(downloadLink(entry, "Download", "capsule-btn editors-pick-btn"));
+    footer.appendChild(pickWebHref
+        ? externalLink(pickWebHref, "Open", "capsule-btn editors-pick-btn")
+        : downloadLink(entry, "Download", "capsule-btn editors-pick-btn"));
     card.appendChild(footer);
     return card;
 }
@@ -633,9 +660,30 @@ function textNode(str) {
     return document.createTextNode(str == null ? "" : String(str));
 }
 
+// Native and browser-based entries as one list. Web apps live in their own
+// top-level key so that older Dockyard builds, which require a DMG on every
+// entry of `apps`, keep decoding the manifest.
+function allApps() {
+    if (!state.manifest) return [];
+    return [...(state.manifest.apps || []), ...(state.manifest.webApps || [])];
+}
+
+function webURLFor(entry) {
+    return entry && isHttpURL(entry.webURL) ? entry.webURL : null;
+}
+
+function hostOf(href) {
+    if (!href) return "";
+    try {
+        return new URL(href).host;
+    } catch {
+        return "";
+    }
+}
+
 function lookup(id) {
     if (!id || !state.manifest) return null;
-    return state.manifest.apps.find(e => e.id === id) || null;
+    return allApps().find(e => e.id === id) || null;
 }
 
 function navigateToApp(id) {

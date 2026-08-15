@@ -24,6 +24,8 @@
     --badge-bg:          rgba(0, 0, 0, 0.08);
     --channel-bg:        rgba(245, 158, 11, 0.22);
     --channel-fg:        #92400e;
+    --web-bg:            rgba(45, 95, 176, 0.16);
+    --web-fg:            #2d5fb0;
     --placeholder:       rgba(0, 0, 0, 0.08);
 
     --radius-card:       14px;
@@ -53,6 +55,8 @@
     --badge-bg:          rgba(255, 255, 255, 0.18);
     --channel-bg:        rgba(245, 158, 11, 0.28);
     --channel-fg:        #fbbf24;
+    --web-bg:            rgba(45, 95, 176, 0.38);
+    --web-fg:            #7ea8e8;
     --placeholder:       rgba(255, 255, 255, 0.10);
 }
 
@@ -431,6 +435,20 @@ a {
     border-radius: 10px;
     background: var(--channel-bg);
     color: var(--channel-fg);
+    text-transform: uppercase;
+}
+
+/* Marks an entry that opens in the browser rather than being downloaded.
+   Blue, so it reads as a descriptive label — amber is reserved for the
+   channel badge, where "Beta" is a caveat. */
+.web-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: var(--web-bg);
+    color: var(--web-fg);
     text-transform: uppercase;
 }
 
