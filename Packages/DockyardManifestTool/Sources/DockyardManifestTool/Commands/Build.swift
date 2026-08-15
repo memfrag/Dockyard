@@ -29,10 +29,11 @@ extension DockyardManifestTool {
                 hash: hash,
                 forceHash: forceHash
             )
+            let counts = ManifestCounts.describe(result.manifest)
             if result.wrote {
-                print("Wrote \(output) (\(result.manifest.apps.count) apps)")
+                print("Wrote \(output) (\(counts))")
             } else {
-                print("No changes; \(output) is up to date (\(result.manifest.apps.count) apps)")
+                print("No changes; \(output) is up to date (\(counts))")
             }
         }
     }

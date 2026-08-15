@@ -97,7 +97,12 @@ extension DockyardManifestTool {
                 do {
                     let encoder = JSONEncoder()
                     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-                    let updated = AuthoringConfig(apps: authoringConfig.apps + [entry])
+                    // Carry webApps through: this rewrites the whole file from
+                    // decoded state, so anything dropped here is deleted on disk.
+                    let updated = AuthoringConfig(
+                        apps: authoringConfig.apps + [entry],
+                        webApps: authoringConfig.webApps
+                    )
                     try encoder.encode(updated).write(to: configURL, options: .atomic)
                 } catch {
                     BuildRunner.fail("Failed to update config: \(error)")

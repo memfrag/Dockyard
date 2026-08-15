@@ -65,7 +65,7 @@ extension DockyardManifestTool {
                 throw ExitCode(7)
             }
             guard !dirty.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                print("Manifest is up to date (\(result.manifest.apps.count) apps); nothing to publish")
+                print("Manifest is up to date (\(ManifestCounts.describe(result.manifest))); nothing to publish")
                 return
             }
 

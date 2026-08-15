@@ -26,14 +26,16 @@ struct ManifestDiff {
         var metadataOnly: [String] = []
         var seen = Set<CatalogEntry.ID>()
 
-        for entry in new.apps {
+        // Web apps are diffed alongside native ones, but they have no version,
+        // so any change to one is by definition a metadata change.
+        for entry in new.allApps {
             seen.insert(entry.id)
             guard let old = previous.entriesByID[entry.id] else {
                 added.append(entry.displayName)
                 continue
             }
-            if old.version != entry.version {
-                versionChanges.append(VersionChange(displayName: entry.displayName, old: old.version, new: entry.version))
+            if let oldVersion = old.version, let newVersion = entry.version, oldVersion != newVersion {
+                versionChanges.append(VersionChange(displayName: entry.displayName, old: oldVersion, new: newVersion))
             } else if old != entry {
                 metadataOnly.append(entry.displayName)
             }

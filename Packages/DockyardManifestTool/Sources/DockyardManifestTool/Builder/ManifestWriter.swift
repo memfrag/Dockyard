@@ -43,10 +43,13 @@ enum ManifestWriter {
 
     private static func contentHash(of manifest: CatalogManifest, using encoder: JSONEncoder) throws -> Data {
         // Strip generatedAt by rebuilding with a fixed sentinel, then encode.
+        // webApps must be carried through, or a change confined to a web app
+        // hashes identically to the old manifest and the write is skipped.
         let stripped = CatalogManifest(
             schemaVersion: manifest.schemaVersion,
             generatedAt: Date(timeIntervalSince1970: 0),
-            apps: manifest.apps
+            apps: manifest.apps,
+            webApps: manifest.webApps
         )
         return try encoder.encode(stripped)
     }

@@ -75,7 +75,25 @@ struct ManifestBuilder {
             entries.append(entry)
         }
 
-        return CatalogManifest(generatedAt: Date(), apps: entries)
+        // Web apps resolve entirely from the config — no release, no asset, no
+        // hashing, and not a single GitHub API call.
+        let webEntries = try config.webApps.map { try $0.resolved() }
+
+        try Self.assertUniqueIDs(apps: entries, webApps: webEntries)
+
+        return CatalogManifest(generatedAt: Date(), apps: entries, webApps: webEntries)
+    }
+
+    /// Ids are the join key for installed state and in-flight phases, so a web
+    /// app sharing an id with a native app would make the UI treat one as the
+    /// other.
+    static func assertUniqueIDs(apps: [CatalogEntry], webApps: [CatalogEntry]) throws {
+        var seen: Set<CatalogEntry.ID> = []
+        for entry in apps + webApps {
+            guard seen.insert(entry.id).inserted else {
+                throw WebAppConfigError.duplicateID(entry.id)
+            }
+        }
     }
 
     /// Three-tier hash resolution: GitHub's asset digest (free), then the hash

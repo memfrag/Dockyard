@@ -44,7 +44,38 @@ Any field you set here **overrides** what the app repo publishes, so the catalog
 }
 ```
 
-- `id` **must** equal the built `.app`'s `CFBundleIdentifier`. The Dockyard engine validates this at install time.
+### Web apps
+
+An entry that opens in the browser instead of installing goes in a separate `webApps` array. It has no GitHub repo, no release and no `.dockyard/` folder, so everything is stated inline:
+
+```json
+{
+  "apps": [ ... ],
+  "webApps": [
+    {
+      "id": "web.example.app",
+      "displayName": "Example Web App",
+      "category": "Productivity",
+      "summary": "A web app that opens in your browser.",
+      "iconURL": "https://your.cdn/dockyard/icons/example.png",
+      "webURL": "https://example.com/app",
+      "developer": "Example AB",
+      "channel": "Beta"
+    }
+  ]
+}
+```
+
+- `id`, `displayName`, `category`, `summary`, `iconURL` and `webURL` are required; `channel`, `developer`, `aboutURL` and `screenshotURLs` are optional. `"TODO"` and blank values are rejected, as for native apps.
+- `webURL` must be `http` or `https` — anything else is refused, since the app would otherwise silently do nothing when clicked.
+- Ids must be unique across `apps` and `webApps`; the id is the join key for installed state, so a collision would make the UI confuse the two.
+- Web apps are built entirely from this config: no GitHub API calls, no release lookup, no DMG hashing.
+- **They stay in `webApps` for backward compatibility.** Dockyard 1.2.5 and earlier require `dmgURL`, `dmgSize` and `version` on every entry of `apps`, and one entry failing to decode fails the whole manifest — so a web app in `apps` would blank the catalog on every copy already installed. Those versions ignore the unknown `webApps` key and carry on. For the same reason `schemaVersion` must stay `1`: shipped clients gate on exact equality. Web apps need Dockyard 1.3.0 or later to be visible.
+- Don't feature a web app in `editorial.json` until the install base has moved: older clients resolve editorial ids against their catalog, and a missing id makes that Today section disappear for them.
+
+### Field notes
+
+- `id` **must** equal the built `.app`'s `CFBundleIdentifier` for native apps. The Dockyard engine validates this at install time. For web apps nothing is installed, so it's just a stable catalog key — use a reserved-looking prefix such as `web.`.
 - `assetPattern` is optional; omit it and the tool picks the first `*.dmg` in the release.
 - `iconURL` is optional; omitted, the tool uses the app repo's `.dockyard/AppIcon.png`.
 - `channel` is optional; values are `"Beta"` or `"Release"`. Defaults to `Release`.

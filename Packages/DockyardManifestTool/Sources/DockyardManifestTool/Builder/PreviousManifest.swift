@@ -24,12 +24,12 @@ struct PreviousManifest {
         guard let manifest = try? decoder.decode(CatalogManifest.self, from: data) else {
             return PreviousManifest()
         }
-        return PreviousManifest(entries: manifest.apps)
+        return PreviousManifest(entries: manifest.allApps)
     }
 
     /// Returns the cached hash only when both URL and size still match the
     /// resolved asset — a re-uploaded asset keeps the same URL, so size acts
-    /// as a cheap staleness signal.
+    /// as a cheap staleness signal. A web app has neither, so it never matches.
     func cachedSHA256(id: CatalogEntry.ID, dmgURL: URL, dmgSize: Int64) -> String? {
         guard let entry = entriesByID[id],
               entry.dmgURL == dmgURL,
