@@ -30,18 +30,20 @@ struct InstalledAppsReconciler: Sendable {
             return []
         }
 
-        let byID = Dictionary(uniqueKeysWithValues: catalog.map { ($0.id, $0) })
+        // Web apps install nothing, so they must never be matched against a
+        // bundle on disk and fabricated into an installation record.
+        let byID = Dictionary(uniqueKeysWithValues: catalog.filter { !$0.isWebApp }.map { ($0.id, $0) })
         var apps: [InstalledApp] = []
         for appURL in contents where appURL.pathExtension == "app" {
             guard let bundleID = try? Installer.bundleIdentifier(at: appURL) else { continue }
-            guard let entry = byID[bundleID] else { continue }
-            let version = (try? Installer.shortVersion(at: appURL)) ?? entry.version
+            guard let entry = byID[bundleID], let catalogVersion = entry.version else { continue }
+            let version = (try? Installer.shortVersion(at: appURL)) ?? catalogVersion
             let installedAt = (try? appURL.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
             apps.append(InstalledApp(
                 id: bundleID,
                 displayName: entry.displayName,
                 version: version,
-                manifestVersion: entry.version,
+                manifestVersion: catalogVersion,
                 bundlePath: appURL,
                 installedAt: installedAt
             ))

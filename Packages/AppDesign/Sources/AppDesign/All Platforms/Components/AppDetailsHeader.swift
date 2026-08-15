@@ -6,12 +6,20 @@ public struct AppDetailsHeader: View {
     private let subtitle: String?
     private let description: String?
     private let channel: String?
+    private let isWebApp: Bool
 
-    public init(_ title: String, subtitle: String? = nil, description: String? = nil, channel: String? = nil) {
+    public init(
+        _ title: String,
+        subtitle: String? = nil,
+        description: String? = nil,
+        channel: String? = nil,
+        isWebApp: Bool = false
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.description = description
         self.channel = channel
+        self.isWebApp = isWebApp
     }
 
     public var body: some View {
@@ -22,6 +30,9 @@ public struct AppDetailsHeader: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundStyle(.tertiary)
+                    if isWebApp {
+                        WebAppBadge()
+                    }
                     if let channel {
                         ChannelBadge(channel)
                     }

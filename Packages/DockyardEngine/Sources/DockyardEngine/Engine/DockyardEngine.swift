@@ -111,15 +111,20 @@ public final class DockyardEngine {
             if catalogIsStale {
                 catalogIsStale = false
             }
-            if catalog == manifest.apps {
+            // Native and web entries are one list to everything downstream —
+            // comparing or sweeping against `manifest.apps` alone would treat a
+            // web-app-only change as no change, and every web app's artwork as
+            // an orphan to evict.
+            let allApps = manifest.allApps
+            if catalog == allApps {
                 Logger.catalog.info("refreshCatalog: no changes; leaving data model untouched")
             } else {
-                catalog = manifest.apps
+                catalog = allApps
                 lastSuccessfulRefresh = Date()
                 do { try cache.save(manifest) } catch {
                     Logger.catalog.warning("Could not write catalog cache: \(String(describing: error), privacy: .public)")
                 }
-                Logger.catalog.info("refreshCatalog succeeded: \(manifest.apps.count) apps (generatedAt: \(manifest.generatedAt, privacy: .public))")
+                Logger.catalog.info("refreshCatalog succeeded: \(manifest.apps.count) apps, \(manifest.webApps.count) web apps (generatedAt: \(manifest.generatedAt, privacy: .public))")
                 if needsDiskRebuild {
                     rebuildInstallationsFromDisk()
                     needsDiskRebuild = false
@@ -128,7 +133,7 @@ public final class DockyardEngine {
             // After any successful load, not just a changed one: orphans outlive
             // the refresh that created them, so a launch where nothing changed is
             // still the right moment to sweep them.
-            pruneAssetCaches(for: manifest.apps)
+            pruneAssetCaches(for: allApps)
         } catch {
             catalogIsStale = true
             Logger.catalog.error("refreshCatalog failed: \(String(describing: error), privacy: .public)")
@@ -232,6 +237,12 @@ public final class DockyardEngine {
         }
         guard let entry = catalog.first(where: { $0.id == appID }) else {
             throw EngineError.notInstalled(id: appID)
+        }
+        // A web app has no DMG; every step of the installer would be nonsense.
+        // The UI never offers Install for one, so reaching here is a programming
+        // error rather than something a user can trigger.
+        guard !entry.isWebApp else {
+            throw EngineError.notInstallable(id: appID)
         }
 
         let flag = CancelFlag()
@@ -361,9 +372,11 @@ public final class DockyardEngine {
     /// separately.
     public var entriesWithUpdatesAvailable: [CatalogEntry] {
         catalog.filter { entry in
+            // A web app is never installed, so it can never have an update.
+            guard let catalogVersion = entry.version else { return false }
             guard let installed = installations.first(where: { $0.id == entry.id }) else { return false }
             let baseline = installed.manifestVersion ?? installed.version
-            return baseline.compare(entry.version, options: .numeric) == .orderedAscending
+            return baseline.compare(catalogVersion, options: .numeric) == .orderedAscending
         }
     }
 
@@ -403,7 +416,7 @@ public final class DockyardEngine {
 
     private func loadCachedCatalog() {
         if let cached = cache.load() {
-            catalog = cached.apps
+            catalog = cached.allApps
             lastSuccessfulRefresh = cached.generatedAt
             catalogIsStale = true
         }

@@ -56,6 +56,13 @@ struct Installer: Sendable {
         onPhase: @Sendable @escaping (InstallerPhaseSignal) -> Void
     ) async throws -> InstallResult {
 
+        // 0. A web app has no DMG to install. The engine rejects these before
+        //    they get here; unwrapping once keeps the rest of the method free of
+        //    optionality that only a web app could ever introduce.
+        guard let dmgURL = entry.dmgURL, let dmgSize = entry.dmgSize, let catalogVersion = entry.version else {
+            throw EngineError.notInstallable(id: entry.id)
+        }
+
         // 1. Pre-check destination — by display name bundle filename
         let destination = installRoot.appending(path: "\(entry.displayName).app")
         if FileManager.default.fileExists(atPath: destination.path),
@@ -69,10 +76,10 @@ struct Installer: Sendable {
         // 2. Download DMG
         try FileManager.default.createDirectory(at: tempRoot, withIntermediateDirectories: true)
         let tempDMG = tempRoot.appending(path: "\(UUID().uuidString).dmg")
-        onPhase(.downloadingDMG(DownloadProgress(bytesWritten: 0, bytesExpected: entry.dmgSize)))
+        onPhase(.downloadingDMG(DownloadProgress(bytesWritten: 0, bytesExpected: dmgSize)))
         let downloaded: URL
         do {
-            downloaded = try await downloader.download(from: entry.dmgURL) { progress in
+            downloaded = try await downloader.download(from: dmgURL) { progress in
                 onPhase(.downloadingDMG(progress))
             }
         } catch {
@@ -148,17 +155,17 @@ struct Installer: Sendable {
 
             // 10. Track
             onPhase(.finalizing)
-            let version = (try? Self.shortVersion(at: destination)) ?? entry.version
-            if version != entry.version {
+            let version = (try? Self.shortVersion(at: destination)) ?? catalogVersion
+            if version != catalogVersion {
                 Logger.installer.warning(
-                    "Version mismatch for \(entry.id, privacy: .public): catalog says \(entry.version, privacy: .public), bundle Info.plist says \(version, privacy: .public). The published DMG appears to ship a stale CFBundleShortVersionString."
+                    "Version mismatch for \(entry.id, privacy: .public): catalog says \(catalogVersion, privacy: .public), bundle Info.plist says \(version, privacy: .public). The published DMG appears to ship a stale CFBundleShortVersionString."
                 )
             }
             let installed = InstalledApp(
                 id: entry.id,
                 displayName: entry.displayName,
                 version: version,
-                manifestVersion: entry.version,
+                manifestVersion: catalogVersion,
                 bundlePath: destination,
                 installedAt: Date()
             )

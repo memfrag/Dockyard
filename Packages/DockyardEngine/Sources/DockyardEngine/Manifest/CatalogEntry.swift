@@ -5,16 +5,26 @@ public struct CatalogEntry: Codable, Equatable, Hashable, Identifiable, Sendable
     public typealias ID = String
 
     /// The installed app's `CFBundleIdentifier`. This is the join key used across
-    /// installed state, disk-based recovery, and install-time validation.
+    /// installed state, disk-based recovery, and install-time validation. Web apps
+    /// install nothing, so for those it's just a stable reverse-DNS catalog key.
     public let id: ID
 
     public let displayName: String
     public let category: String
     public let summary: String
     public let iconURL: URL
-    public let version: String
-    public let dmgURL: URL
-    public let dmgSize: Int64
+
+    /// Set for a web app: opening it means opening this URL in the default
+    /// browser rather than installing anything.
+    public let webURL: URL?
+
+    /// True when this entry opens in a browser instead of being installed.
+    /// The DMG fields below are all nil in that case.
+    public var isWebApp: Bool { webURL != nil }
+
+    public let version: String?
+    public let dmgURL: URL?
+    public let dmgSize: Int64?
     public let dmgSHA256: String?
     public let github: GitHubRepo?
     public let channel: ReleaseChannel
@@ -30,9 +40,10 @@ public struct CatalogEntry: Codable, Equatable, Hashable, Identifiable, Sendable
         category: String,
         summary: String,
         iconURL: URL,
-        version: String,
-        dmgURL: URL,
-        dmgSize: Int64,
+        webURL: URL? = nil,
+        version: String? = nil,
+        dmgURL: URL? = nil,
+        dmgSize: Int64? = nil,
         dmgSHA256: String? = nil,
         github: GitHubRepo? = nil,
         channel: ReleaseChannel = .release,
@@ -47,6 +58,7 @@ public struct CatalogEntry: Codable, Equatable, Hashable, Identifiable, Sendable
         self.category = category
         self.summary = summary
         self.iconURL = iconURL
+        self.webURL = webURL
         self.version = version
         self.dmgURL = dmgURL
         self.dmgSize = dmgSize
@@ -61,14 +73,15 @@ public struct CatalogEntry: Codable, Equatable, Hashable, Identifiable, Sendable
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, displayName, category, summary, iconURL, version
+        case id, displayName, category, summary, iconURL, webURL, version
         case dmgURL, dmgSize, dmgSHA256, github, channel
         case screenshotURLs, aboutURL, releaseNotes
         case developer, requiredVersion
     }
 
     /// Custom decoder so that older manifests that predate the newer fields
-    /// still decode successfully with sensible defaults.
+    /// still decode successfully with sensible defaults. The DMG fields are
+    /// optional because a web app has none; a native entry always carries them.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -76,9 +89,10 @@ public struct CatalogEntry: Codable, Equatable, Hashable, Identifiable, Sendable
         category = try container.decode(String.self, forKey: .category)
         summary = try container.decode(String.self, forKey: .summary)
         iconURL = try container.decode(URL.self, forKey: .iconURL)
-        version = try container.decode(String.self, forKey: .version)
-        dmgURL = try container.decode(URL.self, forKey: .dmgURL)
-        dmgSize = try container.decode(Int64.self, forKey: .dmgSize)
+        webURL = try container.decodeIfPresent(URL.self, forKey: .webURL)
+        version = try container.decodeIfPresent(String.self, forKey: .version)
+        dmgURL = try container.decodeIfPresent(URL.self, forKey: .dmgURL)
+        dmgSize = try container.decodeIfPresent(Int64.self, forKey: .dmgSize)
         dmgSHA256 = try container.decodeIfPresent(String.self, forKey: .dmgSHA256)
         github = try container.decodeIfPresent(GitHubRepo.self, forKey: .github)
         channel = try container.decodeIfPresent(ReleaseChannel.self, forKey: .channel) ?? .release

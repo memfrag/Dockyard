@@ -18,6 +18,7 @@ public enum EngineError: Error, Sendable, Equatable {
     case appIsRunning(bundleID: String)
     case cancelled
     case notInstalled(id: String)
+    case notInstallable(id: String)
     case fileSystemError(underlying: String)
 
     public enum VerificationTool: String, Sendable {
@@ -61,6 +62,8 @@ extension EngineError: LocalizedError {
             return "Install cancelled"
         case .notInstalled(let id):
             return "App is not installed: \(id)"
+        case .notInstallable(let id):
+            return "\(id) is a web app and cannot be installed"
         case .fileSystemError(let underlying):
             return "File system error: \(underlying)"
         }

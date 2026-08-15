@@ -22,6 +22,7 @@ enum AppCardFactory {
             title: entry.displayName,
             description: entry.summary,
             channel: entry.channel.stringIfNotRelease,
+            isWebApp: entry.isWebApp,
             versionMismatch: hasVersionMismatch(for: entry, engine: engine),
             actionTitle: actionTitle(for: entry, engine: engine),
             actionEnabled: actionEnabled(for: entry, engine: engine),
@@ -50,9 +51,11 @@ enum AppCardFactory {
     /// stuck on "Update" forever. Falls back to the on-disk version for legacy
     /// records that predate `manifestVersion`.
     static func updateAvailable(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
+        // A web app is never installed, so it can never be out of date.
+        guard let catalogVersion = entry.version else { return false }
         guard let installed = installedApp(for: entry, engine: engine) else { return false }
         let baseline = installed.manifestVersion ?? installed.version
-        return baseline.compare(entry.version, options: .numeric) == .orderedAscending
+        return baseline.compare(catalogVersion, options: .numeric) == .orderedAscending
     }
 
     /// True when we have a recorded `manifestVersion` for this app and it disagrees
@@ -68,6 +71,11 @@ enum AppCardFactory {
     }
 
     static func actionTitle(for entry: CatalogEntry, engine: DockyardEngine) -> String {
+        // A web app has nothing to install, update or quit — it just opens.
+        if entry.isWebApp {
+            return "Open"
+        }
+
         // In-flight install phases take precedence.
         switch engine.phases[entry.id] ?? .idle {
         case .queued:
@@ -95,6 +103,9 @@ enum AppCardFactory {
     }
 
     static func actionEnabled(for entry: CatalogEntry, engine: DockyardEngine) -> Bool {
+        if entry.isWebApp {
+            return true
+        }
         if engine.phases[entry.id]?.isInFlight == true {
             return false
         }
@@ -108,6 +119,10 @@ enum AppCardFactory {
     }
 
     static func performAction(for entry: CatalogEntry, engine: DockyardEngine) {
+        if let webURL = entry.webURL {
+            NSWorkspace.shared.open(webURL)
+            return
+        }
         if let installed = installedApp(for: entry, engine: engine) {
             if updateAvailable(for: entry, engine: engine), !isRunning(entry, engine: engine) {
                 install(entry, engine: engine)

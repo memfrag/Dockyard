@@ -46,7 +46,8 @@ struct AppDetailsView: View {
                                 entry.displayName,
                                 subtitle: entry.category,
                                 description: entry.summary,
-                                channel: entry.channel.stringIfNotRelease
+                                channel: entry.channel.stringIfNotRelease,
+                                isWebApp: entry.isWebApp
                             )
                             .padding(.bottom, 16)
 
@@ -71,8 +72,17 @@ struct AppDetailsView: View {
                         .padding(.top, 12)
 
                     HStack(alignment: .top, spacing: 24) {
-                        AppDetailProperty("Version", value: entry.version)
-                        AppDetailProperty("Size", value: entry.dmgSize.formatted(.byteCount(style: .binary)))
+                        // A web app has no version or download size; the site it
+                        // opens takes their place so the row is never empty.
+                        if let version = entry.version {
+                            AppDetailProperty("Version", value: version)
+                        }
+                        if let dmgSize = entry.dmgSize {
+                            AppDetailProperty("Size", value: dmgSize.formatted(.byteCount(style: .binary)))
+                        }
+                        if let host = entry.webURL?.host() {
+                            AppDetailProperty("Website", value: host)
+                        }
                         if let requiredVersion = entry.requiredVersion {
                             AppDetailProperty("Requires", value: "macOS \(requiredVersion)")
                         }
@@ -94,7 +104,7 @@ struct AppDetailsView: View {
                         Divider()
                             .opacity(0.5)
                         VStack(alignment: .leading, spacing: 8) {
-                            AppDetailsSectionHeader("What's New in \(entry.version)")
+                            AppDetailsSectionHeader(entry.version.map { "What's New in \($0)" } ?? "What's New")
                             Markdown(releaseNotesDocument, lazy: false)
                                 .markdownStyle(MarkdownStyle())
                         }
@@ -169,7 +179,7 @@ struct AppDetailsView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Version mismatch")
                     .font(.subheadline.weight(.semibold))
-                Text("Installed bundle reports \(installed.version), but the catalog ships \(installed.manifestVersion ?? entry.version). The publisher likely tagged a release without bumping CFBundleShortVersionString.")
+                Text("Installed bundle reports \(installed.version), but the catalog ships \(installed.manifestVersion ?? entry.version ?? installed.version). The publisher likely tagged a release without bumping CFBundleShortVersionString.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

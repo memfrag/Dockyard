@@ -97,7 +97,7 @@ struct TodayPane: View {
                     description: pick.description,
                     icon: iconSource(for: heroEntry),
                     appName: heroEntry.displayName,
-                    appAuthor: "Version \(heroEntry.version)",
+                    appAuthor: heroEntry.version.map { "Version \($0)" } ?? heroEntry.developer ?? "Web app",
                     gradient: gradient(from: pick.gradient),
                     actionTitle: AppCardFactory.actionTitle(for: heroEntry, engine: engine),
                     actionEnabled: AppCardFactory.actionEnabled(for: heroEntry, engine: engine),
