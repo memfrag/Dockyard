@@ -24,6 +24,7 @@ enum SidebarPane {
     // MARK: Authoring Section (hidden unless Editorial Mode is enabled)
 
     case editorial
+    case appMetadata
 }
 
 // MARK: - Protocol Conformances

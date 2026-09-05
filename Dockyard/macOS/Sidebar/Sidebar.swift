@@ -83,6 +83,9 @@ struct Sidebar: View {
                         NavigationLink(value: SidebarPane.editorial) {
                             Label("Editorial", systemImage: "richtext.page")
                         }
+                        NavigationLink(value: SidebarPane.appMetadata) {
+                            Label("App Metadata", systemImage: "shippingbox")
+                        }
                     }
                 }
 
@@ -119,13 +122,15 @@ struct Sidebar: View {
                     ProductivityPane()
                 case .editorial:
                     EditorialPane()
+                case .appMetadata:
+                    AppMetadataPane()
                 default:
                     EmptyPane()
                 }
             }
         }
         .onChange(of: appSettings.isEditorialModeEnabled) { _, isEnabled in
-            if !isEnabled, selection == .editorial {
+            if !isEnabled, selection == .editorial || selection == .appMetadata {
                 selection = .today
             }
         }
