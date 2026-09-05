@@ -1,3 +1,4 @@
+import DockyardEngine
 import Foundation
 import Testing
 @testable import DockyardManifestTool
