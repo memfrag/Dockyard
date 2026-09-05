@@ -54,7 +54,9 @@ struct CatalogPane: View {
         if let extraFilter {
             result = result.filter(extraFilter)
         }
-        guard let tokens = searchTokens else { return result }
+        // Alphabetical only when browsing. While searching, relevance order is
+        // the point of the ranking below.
+        guard let tokens = searchTokens else { return Self.alphabetical(result) }
         return Self.rank(entries: result, against: tokens)
     }
 
@@ -64,6 +66,13 @@ struct CatalogPane: View {
         return query
             .split(whereSeparator: { $0.isWhitespace })
             .map(String.init)
+    }
+
+    /// Case- and diacritic-insensitive, and locale-aware, so "Överdrift" lands
+    /// where a reader of the current locale expects it rather than after "Z"
+    /// on a raw scalar comparison.
+    static func alphabetical(_ entries: [CatalogEntry]) -> [CatalogEntry] {
+        entries.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
     }
 
     // MARK: - Ranking

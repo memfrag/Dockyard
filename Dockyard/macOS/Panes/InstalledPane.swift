@@ -77,8 +77,14 @@ struct InstalledPane: View {
 
     // MARK: - Card mapping
 
+    /// Locale-aware so "Överdrift" sorts where a reader expects, not after "Z".
+    private var sortedInstallations: [InstalledApp] {
+        engine.installations
+            .sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+    }
+
     private var cardItems: [AppCardItem] {
-        engine.installations.map { installed in
+        sortedInstallations.map { installed in
             let entry = engine.catalog.first(where: { $0.id == installed.id })
             let actionTitle: String
             let actionEnabled: Bool
